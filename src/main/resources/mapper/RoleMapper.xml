@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.circle.dao.RoleDAO">
+
+    <!--<cache type="org.mybatis.caches.ehcache.EhcacheCache"/>-->
+
+    <resultMap id="RoleModel" type="com.circle.vo.RoleModel">
+        <result column="roleName" property="roleName"/>
+        <result column="roleDescription" property="roleDescription"/>
+        <result column="roleLabel" property="roleLabel"/>
+        <result column="createTime" property="createTime"/>
+        <result column="creator" property="creator"/>
+        <result column="timestamp" property="timestamp"/>
+
+    </resultMap>
+    <insert id="create" parameterType="RoleModel">
+        insert into te_role (roleName,roleDescription,roleLabel,createTime,creator,timestamp)
+        values(#{roleName},#{roleDescription},#{roleLabel},#{createTime},#{creator},#{timestamp})
+    </insert>
+
+    <select id="findRoleList" resultMap="RoleModel">
+        select * from te_role where roleName like CONCAT('%',#{0},'%') ORDER BY roleId DESC limit #{1},#{2}
+    </select>
+
+    <select id="findAll" resultMap="RoleModel">
+        select * from te_role
+    </select>
+
+
+    <select id="findRolePage" resultType="int">
+        select count(*) from te_role where roleName like CONCAT('%',#{0},'%')
+    </select>
+
+    <select id="findByName" parameterType="String" resultType="RoleModel">
+        select * from te_role where roleName=#{roleName}
+    </select>
+
+
+    <select id="findById" parameterType="long" resultType="RoleModel">
+        select * from te_role where roleId=#{roleId}
+    </select>
+
+
+
+
+</mapper>

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.circle.dao.ModuleDAO">
+
+    <!--<cache type="org.mybatis.caches.ehcache.EhcacheCache"/>-->
+
+    <resultMap id="ModuleModel" type="com.circle.vo.ModuleModel">
+        <result column="moduleName" property="moduleName"/>
+        <result column="moduleCode" property="moduleCode"/>
+        <result column="moduleSuperCode" property="moduleSuperCode"/>
+        <result column="modulePage" property="modulePage"/>
+        <result column="moduleLevel" property="moduleLevel"/>
+        <result column="timestamp" property="timestamp"/>
+
+    </resultMap>
+    <select id="findAll" resultMap="ModuleModel">
+        select * from te_module
+    </select>
+
+    <select id="findByCode" resultMap="ModuleModel">
+        select * from te_module where moduleCode=#{0}
+    </select>
+
+
+</mapper>

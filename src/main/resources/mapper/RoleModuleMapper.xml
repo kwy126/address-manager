@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.circle.dao.RoleModuleDAO">
+
+    <!--<cache type="org.mybatis.caches.ehcache.EhcacheCache"/>-->
+
+    <resultMap id="RoleModuleModel" type="com.circle.vo.RoleModuleModel">
+        <result column="roleLabel" property="roleLabel"/>
+        <result column="moduleCode" property="moduleCode"/>
+        <result column="mosuleSuperCode" property="mosuleSuperCode"/>
+        <result column="finds" property="finds"/>
+        <result column="adds" property="adds"/>
+        <result column="deletes" property="deletes"/>
+        <result column="modifys" property="modifys"/>
+        <result column="timestamp" property="timestamp"/>
+    </resultMap>
+
+
+    <select id="findByRoleLabelByModuleCode" resultType="RoleModuleModel">
+        select * from te_role_module where roleLabel=#{0} and moduleCode=#{1}
+    </select>
+   <insert id="create" parameterType="RoleModuleModel">
+        insert into te_role_module (roleLabel,moduleCode,mosuleSuperCode,finds,adds,deletes,modifys,timestamp)
+        values(#{roleLabel},#{moduleCode},#{mosuleSuperCode},#{finds},#{adds},#{deletes},#{modifys},#{timestamp})
+    </insert>
+    <update id="setRoleSecureValid" parameterType="RoleModuleModel">
+        update te_role_module set finds=#{finds},adds=#{adds},deletes=#{deletes},modifys=#{modifys},timestamp=#{timestamp} where roleLabel=#{roleLabel} and moduleCode=#{moduleCode}
+    </update>
+
+    <select id="findMySecureValid" resultType="RoleModuleModel">
+        select * from te_role_module trm where  (exists (select * from te_account_role tar where tar.roleLabel=trm.roleLabel and tar.acctName=#{1})) and trm.moduleCode=#{0}
+    </select>
+
+</mapper>

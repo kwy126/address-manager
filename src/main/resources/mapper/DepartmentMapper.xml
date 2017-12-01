@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.circle.dao.DepartmentDAO">
+
+    <resultMap id="DepartmentModel" type="com.circle.vo.DepartmentModel">
+        <result column="deptName" property="deptName"/>
+        <result column="createTime" property="createTime"/>
+        <result column="creator" property="creator"/>
+        <result column="deptDescription" property="deptDescription"/>
+        <result column="deptPrincipal" property="deptPrincipal"/>
+        <result column="timestamp" property="timestamp"/>
+
+    </resultMap>
+
+    <insert id="create" parameterType="DepartmentModel">
+        insert into te_department (deptName,createTime,creator,deptDescription,deptPrincipal,timestamp)
+        values(#{deptName},#{createTime},#{creator},#{deptDescription},#{deptPrincipal},#{timestamp})
+    </insert>
+
+    <select id="findDepartmentList" resultMap="DepartmentModel">
+        select * from te_department where deptName like CONCAT('%',#{0},'%') ORDER BY deptId DESC limit #{1},#{2}
+    </select>
+
+
+    <select id="findDepartmentPage" resultType="int">
+        select count(*) from te_department where deptName like CONCAT('%',#{0},'%')
+    </select>
+
+    <select id="findById" resultMap="DepartmentModel">
+        select * from te_department where deptId=#{deptId}
+    </select>
+
+
+    <select id="findAllDepartment" resultMap="DepartmentModel">
+        select * from te_department
+    </select>
+
+</mapper>

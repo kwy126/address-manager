@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.circle.dao.AddressDAO">
+
+    <resultMap id="AddressModel" type="com.circle.vo.AddressModel">
+        <result column="id" property="id"/>
+        <result column="request_number" property="request_number"/>
+        <result column="request_date" property="request_date"/>
+        <result column="requester_postcode" property="requester_postcode"/>
+        <result column="requester_address" property="requester_address"/>
+        <result column="file_entry_date" property="file_entry_date"/>
+        <result column="patent_type" property="patent_type"/>
+        <result column="requester_type" property="requester_type"/>
+        <result column="province" property="province"/>
+        <result column="city" property="city"/>
+        <result column="region" property="region"/>
+        <result column="function_region" property="function_region"/>
+        <result column="region_marked" property="region_marked"/>
+        <result column="function_region_marked" property="function_region_marked"/>
+        <result column="month" property="month"/>
+        <result column="remark" property="remark"/>
+        <result column="type" property="type"/>
+        <result column="state" property="state"/>
+        <result column="channel" property="channel"/>
+        <result column="isRight" property="isRight"/>
+        <result column="functionIsMatch" property="functionIsMatch"/>
+        <result column="createTime" property="createTime"/>
+        <result column="creator" property="creator"/>
+    </resultMap>
+
+    <resultMap id="StaticsDto" type="com.circle.vo.StaticsDto">
+        <result column="patent_type" property="patent_type"/>
+        <result column="sum" property="sum"/>
+        <result column="region" property="region"/>
+    </resultMap>
+
+    <update id="update" parameterType="AddressModel">
+        update te_address set state=#{state},province=#{province},city=#{city},region=#{region},remark=#{remark} ,month=#{month} ,function_region=#{function_region},isRight=#{isRight} ,functionIsMatch=#{functionIsMatch},createTime=#{createTime},creator=#{creator} where id=#{id}
+    </update>
+
+    <select id="findAddressPage" resultType="int">
+        select count(*) from te_address
+        where type=#{type} and state = #{state}
+        <if test="search!=null and search!=''">
+           and request_number like CONCAT('%',#{search},'%')
+        </if>
+    </select>
+
+    <select id="findAddressListByPage" resultMap="AddressModel">
+        select * from te_address
+        where  type=#{type} and state = #{state}
+        <if test="search!=null and search!=''">
+            and  request_number like CONCAT('%',#{search},'%')
+        </if>
+        ORDER BY id ASC limit #{1},#{2}
+    </select>
+
+    <select id="findAddressList" resultMap="AddressModel">
+        select * from te_address
+        where  type=#{type}
+        <if test="state!=null and state!=''">
+            and state = #{state}
+        </if>
+        <if test="search!=null and search!=''">
+            and  request_number like CONCAT('%',#{search},'%')
+        </if>
+        ORDER BY id ASC limit #{1},#{2}
+    </select>
+
+    <insert id="insertBatch" parameterType="java.util.List">
+        REPLACE  into te_address(request_number,request_date,requester_postcode,requester_address,file_entry_date,patent_type,requester_type,province,city,region,function_region,region_marked,function_region_marked,month,remark,type,state,channel,createTime,creator)
+        values
+        <foreach collection="list" item="item" index="index" separator=",">
+            (#{item.request_number},#{item.request_date},#{item.requester_postcode},#{item.requester_address},#{item.file_entry_date},#{item.patent_type},#{item.requester_type},#{item.province},#{item.city},#{item.region},#{item.function_region},#{item.region_marked},#{item.function_region_marked},#{item.month},#{item.remark},#{item.type},#{item.state},#{item.channel},#{item.creator},#{item.createTime}
+            )
+        </foreach>
+    </insert>
+
+    <select id="findByName" parameterType="String"  resultMap="AddressModel">
+        select * from te_address where requester_address=#{address} and state = #{state}
+    </select>
+
+    <select id="findById"  resultMap="AddressModel">
+        select * from te_address where id=#{id} and state = #{state}
+    </select>
+
+    <select id="findByUnParse"  resultMap="AddressModel">
+        select * from te_address where type=#{type} and state = #{state}
+    </select>
+
+    <select id="findByLikeName" parameterType="String"  resultMap="AddressModel">
+        select * from te_address
+        where state = #{state}
+        <if test="address!=null and address!=''">
+            and requester_address like CONCAT('%',#{address},'%')
+        </if>
+
+    </select>
+
+    <delete id="delete" parameterType="int">
+        delete from te_address where id =#{id}
+    </delete>
+
+    <select id="getAllRegions" parameterType="int" resultMap="StaticsDto">
+       select patent_type,count(*) sum,region from te_address  where type=#{type} and state='1' group by region,patent_type;
+    </select>
+
+    <select id="getNumberByRegion" resultMap="StaticsDto">
+      select patent_type,count(*) sum,region from te_address where type=#{0} and region=#{1} GROUP BY patent_type;
+    </select>
+
+    <select id="getRegionPrecision"  resultType="int">
+        select count(*) from te_address where type=#{type} and isRight=#{state} and month=#{time}
+       <!-- <if test="begin!=null and begin!=''">
+            <![CDATA[  and month >= #{begin} ]]>
+        </if>
+        <if test="end!=null and end!=''">
+            <![CDATA[   and month <= #{end}]]>
+        </if>-->
+    </select>
+
+    <select id="getFunctionPrecision"  resultType="int">
+        select count(*) from te_address where type=#{type} and functionIsMatch=#{state} and month=#{time}
+    <!--    <if test="begin!=null and begin!=''">
+            <![CDATA[  and month >= #{begin} ]]>
+        </if>
+        <if test="end!=null and end!=''">
+            <![CDATA[   and month <= #{end}]]>
+        </if>-->
+    </select>
+
+    <select id="getDataByTypeAndTime" resultMap="AddressModel">
+        select * from te_address where type=#{type} and month=#{time}
+     <!--   <if test="begin!=null and begin!=''">
+            <![CDATA[  and month >= #{begin} ]]>
+        </if>
+        <if test="end!=null and end!=''">
+            <![CDATA[   and month <= #{end}]]>
+        </if>-->
+    </select>
+
+</mapper>

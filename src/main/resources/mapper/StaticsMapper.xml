@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.circle.dao.StaticsDAO">
+
+    <resultMap id="StaticsModel" type="com.circle.vo.StaticsModel">
+        <result column="id" property="id"/>
+        <result column="region" property="region"/>
+        <result column="invention_number" property="invention_number"/>
+        <result column="use_number" property="use_number"/>
+        <result column="design_number" property="design_number"/>
+        <result column="sum" property="sum"/>
+        <result column="create_date" property="create_date"/>
+        <result column="type" property="type"/>
+
+    </resultMap>
+    <insert id="insert" parameterType="StaticsModel">
+        insert into te_statics (region,invention_number,use_number,design_number,sum,create_date,type)
+        values(#{region},#{invention_number},#{use_number},#{design_number},#{sum},#{create_date},#{type})
+    </insert>
+
+    <select id="getByRegion" resultMap="StaticsModel">
+        select * from te_statics where region=#{0} and type=#{1}
+    </select>
+
+    <update id="update" parameterType="StaticsModel">
+        update te_statics set invention_number=#{invention_number},use_number=#{use_number},design_number=#{design_number},sum=#{sum} , create_date=#{create_date} where region=#{region}
+    </update>
+
+    <select id="getAllStatics" resultMap="StaticsModel">
+        select * from te_statics where type=#{1}
+    </select>
+
+
+</mapper>

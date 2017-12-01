@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.circle.dao.FunctionCodeDAO">
+
+    <resultMap id="FunctionCodeModel" type="com.circle.vo.FunctionCodeModel">
+        <result column="name" property="name"/>
+        <result column="parent" property="parent"/>
+        <result column="description" property="description"/>
+        <result column="level" property="level"/>
+    </resultMap>
+
+    <select id="getFunctionByName" resultMap="FunctionCodeModel">
+        select * from te_function_code where name = #{name} and level=#{level}
+        <if test="description!=null and description!=''">
+            and description=#{description}
+        </if>
+    </select>
+
+
+
+</mapper>

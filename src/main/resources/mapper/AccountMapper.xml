@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.circle.dao.AccountDAO">
+
+    <!--<cache type="org.mybatis.caches.ehcache.EhcacheCache"/>-->
+
+    <resultMap id="AccountModel" type="com.circle.vo.AccountModel">
+        <result column="acctName" property="acctName"/>
+        <result column="acctNickName" property="acctNickName"/>
+        <result column="acctPassword" property="acctPassword"/>
+        <result column="acctSuper" property="acctSuper"/>
+        <result column="acctDeleteState" property="acctDeleteState"/>
+        <result column="createTime" property="createTime"/>
+        <result column="creator" property="creator"/>
+        <result column="timestamp" property="timestamp"/>
+
+    </resultMap>
+    <insert id="create" parameterType="AccountModel">
+        insert into te_account (acctName,acctNickname,acctPassword,acctState,acctSuper,acctDeleteState,createTime,creator,timestamp)
+        values(#{acctName},#{acctNickName},#{acctPassword},#{acctState},#{acctSuper},#{acctDeleteState},#{createTime},#{creator},#{timestamp})
+    </insert>
+
+    <select id="findByUserNameAndPassword" resultMap="AccountModel">
+        select * from te_account where acctName=#{0} and acctPassword=#{1}
+    </select>
+
+    <select id="getByUuid" parameterType="int" resultType="AccountModel">
+        select * from te_account where acctId=#{acctId}
+    </select>
+
+    <select id="findByUserName" parameterType="String" resultType="AccountModel">
+        select * from te_account where acctName=#{acctName}
+    </select>
+
+    <delete id="delAccount" parameterType="int">
+      delete from te_account where acctId =#{acctId}
+    </delete>
+
+
+    <select id="findAccountList" resultMap="AccountModel">
+        select * from te_account where acctName like CONCAT('%',#{0},'%') ORDER BY acctId DESC limit #{1},#{2}
+    </select>
+
+
+    <select id="findAccountPage" resultType="int">
+        select count(*) from te_account where acctName like CONCAT('%',#{0},'%')
+    </select>
+
+    <update id="setPassword" >
+        update te_account set acctPassword=#{0} where acctName=#{1}
+    </update>
+</mapper>

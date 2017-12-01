@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xsi:schemaLocation="
+       http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/context
+       http://www.springframework.org/schema/context/spring-context.xsd
+       http://www.springframework.org/schema/mvc
+       http://www.springframework.org/schema/mvc/spring-mvc.xsd"
+	default-lazy-init="true">
+
+<!--	 开启controller注解支持
+	<context:component-scan base-package="com.circle"
+		use-default-filters="false">
+		<context:include-filter type="annotation"
+			expression="org.springframework.stereotype.Controller" />
+	</context:component-scan>
+	&lt;!&ndash; 静态资源 &ndash;&gt;
+	<mvc:default-servlet-handler />-->
+
+	<context:component-scan base-package="com.circle"/>
+	<mvc:annotation-driven/>
+	<mvc:default-servlet-handler />
+
+	<!-- 文件上传 -->
+	<bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+		<property name="maxUploadSize"><value>10000000000</value></property>
+		<property name="defaultEncoding"><value>UTF-8</value></property>
+	</bean>
+
+    <!-- 资源映射，当web.xml文件中过滤器配置为/,即过滤到所有文件，包括静态文件-->
+	<!--<mvc:resources mapping="/css/**" location="/css/"></mvc:resources>
+	<mvc:resources mapping="/js/**" location="/js/"/>
+	<mvc:resources mapping="/image/**" location="/image/"/>
+	<mvc:resources mapping="/fonts/**" location="/fonts/"/>-->
+
+	<mvc:interceptors>
+		<!-- 拦截 '/'开头的请求（web.xml配置的） -->
+		<mvc:interceptor>
+			<!--<mvc:mapping path="/static/**"/>
+			<mvc:mapping path="/0/**"/>
+			<mvc:mapping path="/module/**"/>-->
+			<mvc:mapping path="/**"/>
+			<bean class="com.circle.intercept.AdminIntercept"/>
+		</mvc:interceptor>
+
+	</mvc:interceptors>
+
+	<!-- 使用thymeleaf解析 -->
+	<bean id="templateResolver"
+		  class="org.thymeleaf.spring4.templateresolver.SpringResourceTemplateResolver">
+		<property name="prefix" value="/" />
+		<property name="suffix" value=".html" />
+		<property name="templateMode" value="HTML" />
+		<property name="cacheable" value="false" />
+	</bean>
+
+	<bean id="templateEngine"
+		  class="org.thymeleaf.spring4.SpringTemplateEngine">
+		<property name="templateResolver" ref="templateResolver" />
+	</bean>
+
+	<bean class="org.thymeleaf.spring4.view.ThymeleafViewResolver">
+		<property name="templateEngine" ref="templateEngine" />
+		<!--解决中文乱码-->
+		<property name="characterEncoding" value="UTF-8"/>
+	</bean>
+
+
+</beans>

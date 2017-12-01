@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.circle.dao.AddressCodeDAO">
+
+    <resultMap id="AddressCodeModel" type="com.circle.vo.AddressCodeModel">
+        <result column="id" property="id"/>
+        <result column="name" property="name"/>
+        <result column="url" property="url"/>
+        <result column="region_code" property="region_code"/>
+        <result column="parent_code" property="parent_code"/>
+        <result column="level" property="level"/>
+        <result column="description" property="description"/>
+        <result column="type" property="type"/>
+        <result column="state" property="state"/>
+        <result column="old_desc" property="old_desc"/>
+    </resultMap>
+
+    <delete id="delete" parameterType="int">
+        delete from te_address_code where id =#{id}
+    </delete>
+
+    <insert id="insertRoad" parameterType="AddressCodeModel">
+        insert into te_address_code(name,url,region_code,parent_code,level,description) values (#{name},#{url},#{region_code},#{parent_code},#{level},#{description})
+    </insert>
+
+    <insert id="insertBatch" parameterType="java.util.List">
+        insert into te_address_code(name,url,region_code,parent_code,level,description,old_desc)
+        values
+        <foreach collection="list" item="item" index="index" separator=",">
+            (#{item.name},#{item.url},#{item.region_code},#{item.parent_code},#{item.level},#{item.description},#{item.old_desc})
+        </foreach>
+    </insert>
+
+    <update id="setDesc" >
+        update te_address_code t set t.description=#{0} where id=#{1}
+    </update>
+
+    <insert id="insert">
+        insert into te_address_code(parent_code,name,region_code,level)
+        values(#{0},#{1},#{2},#{3})
+    </insert>
+
+
+
+    <select id="findAll" resultMap="AddressCodeModel">
+        select * from te_address_code
+    </select>
+
+
+    <select id="findByName"  resultMap="AddressCodeModel">
+        select * from te_address_code where name =#{name} and level=#{level}
+        <if test="description!=null and description!=''">
+            and description like CONCAT('%',#{description},'%')
+        </if>
+        <if test="type!=null ">
+            and type=#{type}
+        </if>
+    </select>
+
+    <select id="findByOnlyName"  resultMap="AddressCodeModel">
+        select * from te_address_code where name =#{name}
+    </select>
+
+    <select id="findByParentCode"  resultMap="AddressCodeModel">
+        select * from te_address_code where  parent_code =#{region_code}
+    </select>
+
+
+
+
+
+    <select id="findByState"  resultMap="AddressCodeModel">
+        select * from te_address_code where name =#{name} and level=#{level}
+        <if test="description!=null and description!=''">
+            and description like CONCAT('%',#{description},'%')
+        </if>
+        <if test="state!=null">
+            and state=#{state}
+        </if>
+        <if test="type!=null">
+            and type=#{type}
+        </if>
+    </select>
+
+    <select id="findByCode" parameterType="String"  resultMap="AddressCodeModel">
+        select * from te_address_code where region_code=#{parent_code}
+    </select>
+
+    <update id="update" parameterType="AddressCodeModel">
+        update te_address_code set name=#{name},url=#{url},parent_code=#{parent_code},level=#{level},description=#{description},old_desc=#{old_desc}   where id=#{id}
+    </update>
+
+
+    <select id="findByAreaAndName" parameterType="String"  resultMap="AddressCodeModel">
+        select * from te_address_code where name=#{name} and description=#{description}
+    </select>
+
+
+    <select id="findByAreaAndNameAndLevel" parameterType="String"  resultMap="AddressCodeModel">
+        select * from te_address_code where name=#{name} and level=#{level}
+        <if test="description!=null and description!=''">
+            and description like CONCAT('%',#{description},'%')
+        </if>
+        UNION
+        select * from te_address_code where name=#{name} and level=#{level}
+        <if test="description!=null and description!=''">
+            and old_desc like CONCAT('%',#{description},'%')
+        </if>
+
+    </select>
+
+    <select id="selectByLike" resultMap="AddressCodeModel">
+         select *  from te_address_code  where name  like '%村委会';
+    </select>
+
+    <select id="selectByLevel" resultMap="AddressCodeModel">
+        select *  from te_address_code  where level=#{level};
+    </select>
+
+    <select id="selectByLevelAndType" resultMap="AddressCodeModel">
+        select *  from te_address_code  where level=#{level} and type=#{type};
+    </select>
+
+
+</mapper>

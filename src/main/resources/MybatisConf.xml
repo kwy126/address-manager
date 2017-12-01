@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN" "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+	<typeAliases>
+		<typeAlias type="com.circle.vo.AccountModel" alias="AccountModel"/>
+		<typeAlias type="com.circle.vo.ModuleModel" alias="ModuleModel"/>
+		<typeAlias type="com.circle.vo.DepartmentModel" alias="DepartmentModel"></typeAlias>
+
+		<typeAlias type="com.circle.vo.RoleModel" alias="RoleModel"/>
+		<typeAlias type="com.circle.vo.AccountRoleModel" alias="AccountRoleModel"/>
+		<typeAlias type="com.circle.vo.RoleModuleModel" alias="RoleModuleModel"/>
+		<typeAlias type="com.circle.vo.ItemCatModel" alias="ItemCatModel"/>
+		<typeAlias type="com.circle.vo.PositionModel" alias="PositionModel"/>
+		<typeAlias type="com.circle.vo.ProductModel" alias="ProductModel"/>
+		<typeAlias type="com.circle.vo.AddressModel" alias="AddressModel"/>
+		<typeAlias type="com.circle.vo.AddressCodeModel" alias="AddressCodeModel"/>
+
+		<typeAlias type="com.circle.vo.StaticsDto" alias="StaticsDto"/>
+		<typeAlias type="com.circle.vo.StaticsModel" alias="StaticsModel"/>
+
+		<typeAlias type="com.circle.vo.FunctionCodeModel" alias="FunctionCodeModel"/>
+	</typeAliases>
+</configuration>

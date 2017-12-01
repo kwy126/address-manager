@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.circle.dao.PositionDAO">
+
+
+    <resultMap id="PositionModel" type="com.circle.vo.PositionModel">
+        <result column="poDepartment" property="poDepartment"/>
+        <result column="poName" property="poName"/>
+        <result column="poDescription" property="poDescription"/>
+        <result column="createTime" property="createTime"/>
+        <result column="creator" property="creator"/>
+        <result column="timestamp" property="timestamp"/>
+
+    </resultMap>
+    <insert id="create" parameterType="PositionModel">
+        insert into te_position (poDepartment,poName,poDescription,createTime,creator,timestamp)
+        values(#{poDepartment},#{poName},#{poDescription},#{createTime},#{creator},#{timestamp})
+    </insert>
+
+    <select id="findByDeptId" parameterType="long" resultType="PositionModel">
+        select * from te_position where poDepartment=#{poDepartment}
+    </select>
+
+    <select id="findByUuid" parameterType="long" resultType="PositionModel">
+        select * from te_position where poId=#{poId}
+    </select>
+
+    <delete id="deleteByDepartment" parameterType="int">
+      delete from te_position where poId =#{poId}
+    </delete>
+
+
+    <select id="findPositionListInfo" resultMap="PositionModel">
+        select pos.*,dept.deptName from te_position pos,te_department dept where pos.poDepartment=dept.deptId
+          and pos.poDepartment=#{0} and pos.poName like CONCAT('%',#{1},'%') ORDER BY poId DESC limit #{2},#{3}
+    </select>
+
+
+    <select id="findPositionPage" resultType="int">
+        select count(*) from te_position pos,te_department dept where pos.poDepartment=dept.deptId
+          and pos.poDepartment=#{0} and pos.poName like CONCAT('%',#{1},'%')
+    </select>
+
+
+    <update id="modifyPosition" parameterType="PositionModel">
+      update te_position set poDepartment=#{poDepartment},poName=#{poName},poDescription=#{poDescription} where poId=#{poId}
+    </update>
+
+
+</mapper>
