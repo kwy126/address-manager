@@ -1,0 +1,356 @@
+<!DOCTYPE html> <!-- html定义 -->
+<html lang="en" xmlns="http://www.w3.org/1999/html">
+<head>
+
+    <meta charset="utf-8"> <!-- 页面编码 -->
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"> <!-- 在IE运行最新的渲染模式 -->
+    <meta name="viewport" content="width=device-width, initial-scale=1"> <!-- 初始化移动浏览器显示 -->
+    <title>登录</title>
+    <link href="css/semantic.min.css" rel="stylesheet">
+    <link href="css/style.css" rel="stylesheet">
+</head>
+<body class="pushable">
+<div class="ui fixed borderless inverted menu">
+    <div class="ui container">
+        <a href="/" class="header item">
+
+        </a>
+        <a href="index.html" class="item"><i class="home icon"></i> 首页</a>
+        <a href="apply.html" class="item"><i class="list layout icon"></i> 申请管理</a>
+        <a href="authorize.html" class="item"><i class="list layout icon"></i> 授权管理</a>
+        <a href="effective.html" class="item"><i class="list layout icon"></i> 有效管理</a>
+        <a href="region_manager.html" class="item"><i class="list layout icon"></i>分词库管理</a>
+
+        <div class="right item">
+            <div class="ui dropdown">
+                <a class="acctInfo"></a>
+                <!--<div class="text acctInfo"></div>-->
+                <i class="dropdown icon"></i>
+                <div class="menu">
+                    <div class="item" data-value="modify-password">修改密码</div>
+                    <div class="item" data-value="quit">退出</div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+<div class="pusher">
+    <div class="ui large secondary borderless pointing menu">
+    </div>
+    <div class="nav-divider">
+
+    </div>
+    <div class="ui container">
+        <div style="text-align: center;">
+            <div class="red ui buttons center">
+                <button class="ui button active apply-btn">申请</button>
+                <button class="ui button authorize-btn">授权</button>
+                <button class="ui button effective-btn">有效</button>
+            </div>
+        </div>
+
+        <div class="ui stackable grid" style="padding-top: 20px;">
+            <div class="eight wide column">
+                <div class="row relative">
+                    <h2 class="ui dividing header red">
+                        <i class="pie chart icon red"></i>
+                        各区市专利情况
+                    </h2>
+                </div>
+                <table class="ui celled table">
+                    <thead>
+                    <th >区域</th>
+                    <th >发明</th>
+                    <th >使用类型</th>
+                    <th >外观设计</th>
+                    <th >总量</th>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+
+            </div>
+            <div class="eight wide column">
+                <div class="row relative">
+                    <h2 class="ui dividing header red">
+                        <i class="pie chart icon red"></i>
+                        报表展示
+                    </h2>
+                </div>
+                <div class="ui segment">
+                    <div id="main" style="width: 100%;height: 500px;"></div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+    <!-- footer -->
+    <div class="ui inverted vertical segment" style="height: 50px;text-align:center;">
+        Copyright @2017 宁波科技信息研究院版权所有
+    </div>
+
+    <!-- 修改密码模态框 -->
+    <div class="ui modal small modify-modal">
+        <div class="header">
+            修改密码
+        </div>
+        <div class="content">
+
+            <div class="ui center aligned text container">
+                <div class="ui message hidden modify-password-message">
+                    <ul class='list'></ul>
+                </div>
+
+                <form class="ui form" style="width: 90%;">
+                    <div class="field">
+                        <div class="ui left icon input">
+                            <i class="lock icon"></i>
+                            <input type="password" id="password"  name="password" placeholder="请输入新密码" >
+                        </div>
+                    </div>
+                    <div class="field">
+                        <div class="ui left icon input">
+                            <i class="lock icon"></i>
+                            <input type="password" id="confirmPassword" name="confirmPassword" placeholder="请输入确认密码">
+                        </div>
+                    </div>
+                    <div class="ui error message"></div>
+
+                </form>
+                <button class="ui negative button cancel-btn">取消</button>
+                <button class="ui positive button modify-btn">修改</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 退出模态框 -->
+    <div class="ui modal exit-modal">
+        <div class="header">
+            退出
+        </div>
+        <div class="content">
+            <div class="ui center aligned text container">
+                <div class="ui mini action left icon fluid input">
+                   <p>您是否确定退出该系统，确定请按退出，否则请按取消</p>
+                </div>
+            </div>
+        </div>
+        <div class="actions">
+            <button class="ui negative button cancel-btn">取消</button>
+            <button class="ui positive button exit-btn">退出</button>
+        </div>
+    </div>
+
+</div>
+
+<script src="js/jquery-2.0.3.min.js"></script>
+<script src="js/semantic.min.js"></script>
+<script src="js/siderbar.js"></script>
+<script src="js/tagcloud.min.js"></script>
+<script src="js/jquery.ui.widget.js" type="text/javascript"></script>
+<script src="js/jquery.iframe-transport.js" type="text/javascript"></script>
+<script src="js/echarts.js"></script>
+<script src="js/common.js"></script>
+
+<script type="text/javascript">
+    var type = 0;
+    var moduleCode = '0';
+    $(function () {
+        function initFun() {
+        };
+
+        findModuleParameter(moduleCode, initFun);
+        findList();
+        initChart();
+
+        $('.ui.dropdown').dropdown({
+            onChange: function (value, text) {
+                if(value=="modify-password"){
+                    $('.ui.modify-modal').modal('show');
+                }else if(value=="quit"){
+                    $('.ui.exit-modal').modal('show');
+                }
+
+            }
+        })
+
+       /* $('.ui.form').form({
+            password: {
+                identifier:'password',
+                rules: [{type: 'empty', prompt: '请输入您的新密码'}]
+            },
+            confirmPassword:{
+                identifier:'confirmPassword',
+                rules: [{type: 'empty', prompt: '请输入您的新密码'}]
+            },onSuccess: function () {
+                alert("成功了啊");
+            }
+        });*/
+
+        $('.apply-btn').click(function(){
+            type=0;
+            findList();
+            initChart();
+        });
+        $('.authorize-btn').click(function(){
+            type=1;
+            findList();
+            initChart();
+        });
+        $('.effective-btn').click(function(){
+            type=2;
+            findList();
+            initChart();
+        });
+        $('.modify-btn').click(function() {
+            var password = document.getElementById('password').value;
+            var confirmPassword = document.getElementById('confirmPassword').value;
+            var message = $('.list').empty();
+
+            if(password==null||password=='') {
+                $('.modify-password-message').removeClass('hidden');
+                $('.modify-password-message').addClass('negative');
+                $("<li></li>").append('新密码不能为空！')
+                    .appendTo(message);
+            }else{
+                if(confirmPassword==null||confirmPassword=='') {
+                    $('.modify-password-message').removeClass('hidden');
+                    $('.modify-password-message').addClass('negative');
+                    $("<li></li>").append('确认密码不能为空！')
+                        .appendTo(message);
+                }else if(password!=confirmPassword) {
+                    $('.modify-password-message').removeClass('hidden');
+                    $('.modify-password-message').addClass('negative');
+                    $("<li></li>").append('新密码和确认密码不相同！')
+                        .appendTo(message);
+                }else{
+                    $.getJSON('account/modifyPass',
+                        {
+                            password: password
+                        },
+                        function (data) {
+                            if(data.head){
+                                $('.modify-password-message').removeClass('hidden');
+                                $('.modify-password-message').addClass('positive');
+                                $("<li></li>").append(data.body)
+                                    .appendTo(message);
+                            }else{
+                                $('.modify-password-message').removeClass('hidden');
+                                $('.modify-password-message').addClass('negative');
+                                $("<li></li>").append(data.body)
+                                    .appendTo(message);
+                            }
+                        });
+                }
+            }
+
+        })
+
+
+        $('.exit-btn').click(function(){
+            $.getJSON('account/exit', function (data) {
+                if(data.head){
+                    window.location.href = './login.html';
+                }
+            });
+        })
+
+        $('.cancel-btn').click(function(){
+            $('.ui.modal').modal('hide');
+        })
+
+    });
+
+    function findList() {
+        var tbody = $('tbody').empty();
+        $.post('address/getStatics', {
+            search: '',
+            type:type
+        }, function (data) {
+            if (typeof data != 'object') {
+                data = $.parseJSON(data);
+            }
+            $.each(data.body, function (index, value) {
+                $('<tr></tr>')
+                    .append($("<td></td>").append(value.region))
+                    .append($("<td></td>").append(value.invention_number))
+                    .append($("<td></td>").append(value.use_number))
+                    .append($("<td></td>").append(value.design_number))
+                    .append($("<td></td>").append(value.sum))
+                    .appendTo(tbody);
+            });
+        })
+    };
+
+    function findModuleParameter(moduleCode, initFun) {
+        if (!moduleCode) return;
+        $.getJSON('module/findModuleParameter', {moduleCode: moduleCode}, function (data) {
+            if(data.head){
+                $('a.acctInfo').append(data.body.account);
+            }else{
+                if ('UNLOGIN' == data.body) {
+                    window.location.href = './login.html';
+                }
+            }
+            initFun();
+        });
+    };
+
+
+    <!-- 与图相关函数 -->
+    function initChart() {
+        var myChart = echarts.init(document.getElementById('main'));
+        // 异步加载数据
+        $.post('address/getChartStatics', {type:  type}, function (result) {
+            // 填入数据
+            myChart.setOption({
+                backgroundColor: '#2c343c',
+                visualMap: {
+                    show: false,
+                    min: 80,
+                    max: 600,
+                    inRange: {
+                        colorLightness: [0, 1]
+                    }
+                },
+                series: [
+                    {
+                        name: '访问来源',
+                        type: 'pie',
+                        radius: '55%',
+                        data: result.body,
+                        roseType: 'angle',
+                        label: {
+                            normal: {
+                                textStyle: {
+                                    color: 'rgba(255, 255, 255, 0.3)'
+                                }
+                            }
+                        },
+                        labelLine: {
+                            normal: {
+                                lineStyle: {
+                                    color: 'rgba(255, 255, 255, 0.3)'
+                                }
+                            }
+                        },
+                        itemStyle: {
+                            normal: {
+                                color: '#c23531',
+                                shadowBlur: 200,
+                                shadowColor: 'rgba(0, 0, 0, 0.5)'
+                            }
+                        }
+                    }
+                ]
+            });
+        });
+    }
+    <!-- 与图相关函数 -->
+
+
+</script>
+</body>
+</html>

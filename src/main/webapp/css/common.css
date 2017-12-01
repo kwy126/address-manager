@@ -1,0 +1,28 @@
+/**
+导航栏字体为白色
+ */
+.navbar-inverse .navbar-nav>li>a {
+    color: #fff;
+}
+/**
+    表单为空，则为红色
+ */
+.border-red {
+    border: 1px solid red;
+}
+
+/**
+内容居中
+ */
+.text-align-center{
+    text-align:center;
+}
+
+/**
+模态框样式
+ */
+.modal-header-primary{background:#337ab7;}
+.modal-header-primary h4{font-size:16px;font-weight:bold;color:#ffffff; }
+
+.modal-footer{text-align:center;}
+.hide{display:none;}

@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+    <!-- Bootstrap -->
+    <link href="css/bootstrap.css" rel="stylesheet"> <!-- 载入Bootstrap的CSS样式 -->
+    <link href="css/common.css" rel="stylesheet">
+    <link href="css/bootstrap-dialog.min.css" rel="stylesheet"/>
+</head>
+<body>
+<nav class="navbar navbar-inverse navbar-fixed-top">
+    <div class="container-fluid">
+        <div class="col-md-1">
+            <!-- Brand and toggle get grouped for better mobile display -->
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a href=index2.html>
+                    <img alt="Brand" src="image/logo.png" class="img-responsive img-circle"  style="width:50px;height: 50px;">
+                </a>
+            </div>
+        </div>
+        <div class="col-md-11">
+            <!-- Collect the nav links, forms, and other content for toggling -->
+            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1"  style="color:white">
+
+                <div clas="col-md-6"><ul class="nav navbar-nav navbar-list"></ul></div>
+                <div class="col-md-4"></div>
+                <div class="col-md-2">
+                    <ul class="nav navbar-nav" style="padding-right: 10px;">
+                        <li><a href="javascript:void(0)" class="acctInfo hide"><span class="glyphicon glyphicon-user"></span>&nbsp;
+                        </a></li>
+                        <li><a href="javascript:void(0)" onclick="exit()">注销</a></li>
+                    </ul>
+                </div>
+
+
+            </div><!-- /.navbar-collapse -->
+        </div>
+    </div><!-- /.container-fluid -->
+</nav>
+
+<div class="container main main-container" style="padding-top:70px;">
+    <div class="row">
+        <div class="container breadcrumb-container ">
+            <ol class="breadcrumb"></ol>
+        </div>
+        <div class="col-md-10">
+
+            <div class="input-group w600">
+                <input type="text" class="form-control text-search" placeholder="请输入搜索内容...">
+                <div class="input-group-btn">
+                    <button type="button" class="btn btn-primary btn-search"><span
+                            class="glyphicon glyphicon-search"></span>搜索
+                    </button>
+                </div><!-- /btn-group -->
+            </div><!-- /input-group -->
+
+
+        </div>
+        <div class="col-md-2 text-align-right">
+            <button type="button" class="btn btn-primary btn-add hide" data-toggle="modal" data-target="#add-role"><span
+                    class="glyphicon glyphicon-plus"></span>&nbsp;新增角色
+            </button>
+        </div>
+    </div>
+
+    <table class="table table-bordered table-hover table-responsive" style="margin-top:20px;">
+        <thead>
+        <th style="width:10%;">编号</th>
+        <th style="width:10%;">角色名称</th>
+        <th style="width:20%;">创建时间</th>
+        <th style="width:20%;">创建人</th>
+        <th style="width:20%;">角色简介</th>
+        <th style="width:20%;">操作</th>
+        </thead>
+        <tbody class="tbody-list"></tbody>
+    </table>
+    <!-- 分页-->
+    <nav id="pagination">
+        <ul class="pagination"></ul>
+    </nav>
+
+</div>
+
+<div class="modal fade add-box sm-modal" id="add-role">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header modal-header-primary"><h4 class="modal-title">添加角色</h4></div>
+            <div class="modal-body">
+                <div class="modal-body">
+                    <input type="text" class="form-control addRoleName" placeholder="角色名称" maxlength="64" value=""/>
+                    <textarea class="form-control addRoleDesc margin-top-15 resize" rows="3" placeholder="角色简介"
+                              maxlength="128"></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default btn-cancel" data-dismiss="modal">取消</button>
+                <button type="button" class="btn btn-primary btn-save">保存</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="showRoleModal" tabindex="-1" role="dialog" aria-labelledby="roleModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header modal-header-primary">
+                <h4 class="modal-title">角色管理</h4>
+            </div>
+            <div class="modal-body">
+                <table class="table table-border module-table">
+                    <!--<tr class="role-module-title">
+                        &lt;!&ndash;<td colspan="2">
+                            员工信息管理
+                        </td>&ndash;&gt;
+                    </tr>-->
+                </table>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+<div class="container footer-container">
+    Copyright @2016-2017 宁波柯氏水果有限公司版权所有
+</div>
+<script src="js/jquery-2.0.3.min.js"></script>
+<script src="js/bootstrap.min.js"></script>
+<script src="js/bootstrap-dialog.min.js"></script>
+<script src="js/bootstrap-pagy.min.js"></script>
+<script src="js/common.js"></script>
+<script type="text/javascript">
+    $(function () {
+        var moduleCode = '04002';
+
+        function initFun() {
+            if (secure.find) {
+                //Dialog.loading();
+                demp.findRoleList(1);
+                demp.findRolePage(1);
+            }
+            if (!secure.add)
+                $('button.btn-add').remove();
+            if (secure.add)
+                $('button.btn-add').removeClass('hide');
+        }
+
+        $.findMenu(moduleCode, initFun);
+        $('button.btn-save').on('click', function () {
+            demp.save();
+        })
+        $('button.btn-cancel').on('click', function () {
+            demp.showAddBox();
+        })
+        $('button.btn-search').on('click', function () {
+            demp.findRoleList(1);
+            demp.findRolePage(1);
+        })
+
+
+    });
+    var type = {};
+    type.FIND = 1;
+    type.DELETE = 2;
+    type.MODIFY = 3;
+    type.ADD = 4;
+
+    var demp = {
+        showAddBox: function () {
+            $('input.addRoleName').val('');
+            $('textarea.addRoleDesc').val('');
+
+        },
+        save: function () {
+            $.verify = true;
+            var addRoleName = $.verifyForm('input.addRoleName');
+            var addRoleDesc = $.verifyForm('textarea.addRoleDesc');
+            if(!$.verify) return;
+            $.post('role/addRole', {
+                    name: addRoleName,
+                    desc: addRoleDesc
+                }, function (data) {
+
+                    $('#add-role').modal('hide');
+                    //if (!$.isSuccess(data)) return;
+                    if (typeof data != 'object') {
+                        data = $.parseJSON(data);
+                    }
+                    new BootstrapDialog({
+                        title: '标题',
+                        message: data.body,
+                        type: BootstrapDialog.TYPE_SUCCESS
+                    }).open();
+                    demp.findRoleList(1);
+                }
+            );
+
+
+        },
+        findRoleList: function (page) {
+            var tbody = $('tbody.tbody-list').empty();
+            var search = $('input.text-search').val();
+            $.post('role/findRoleList', {
+                page: page,
+                search: search
+
+            }, function (data) {
+                if (!$.isSuccess(data)) return;
+                /* console.log(data.body);*/
+                if (typeof data != 'object') {
+                    data = $.parseJSON(data);
+                }
+                $.each(data.body, function (index, value) {
+                    $('<tr></tr>')
+                        .append($("<td></td>").append(value.roleId))
+                        .append($("<td></td>").append(value.roleName))
+                        .append($("<td></td>").append(value.createTime))
+                        .append($("<td></td>").append(value.creator))
+                        .append($("<td></td>").append(value.roleDescription))
+                        .append($("<td></td>").append(demp.getBtns(index, value)))
+                        .appendTo(tbody);
+                });
+            })
+        },
+        findRolePage: function (page) {
+            $("#pagination ul").empty();
+            var tbody = $('tbody.tbody-list').empty();
+            var search = $('input.text-search').val();
+            $.post('role/findRolePage', {
+                page: page,
+                search: search
+
+            }, function (data) {
+                if (typeof data != 'object') {
+                    data = $.parseJSON(data);
+                }
+                data.body.nowPage = 1;
+                /* data.body.total = 500;*/
+
+                $.setPage(data.body, demp.findRoleList);
+            })
+        },
+        getBtns: function (index, value) {
+            var btn = "";
+            btn += secure.modify ? "<button type='button' class='btn btn-success btn-xs' data-toggle='modal' data-target='#showRoleModal'  onclick='demp.listModule(\"" + value.roleId + "\")''><span class='glyphicon glyphicon-pencil'></span>&nbsp;编辑</button>":"";
+            btn += "&nbsp;&nbsp;";
+            btn += secure.del ? "<button type='button' class='btn btn-danger btn-xs'><span class='glyphicon glyphicon-remove'></span>&nbsp;删除</button>":"";
+            return btn;
+        },
+        listModule: function (id) {
+            if (!id) return;
+            curRoleId = id;
+            var tbody = $('table.module-table').empty();
+            $.getJSON('module/findAllModule', {roleId: curRoleId}, function (data) {
+                if (!$.isSuccess(data)) return;
+
+                $.each(data.body, function (i, v) {
+                    if (v.level == 0) {
+                        $("<tr class='module-tr super-module'></tr>")
+                            .append($("<td colspan='2'></td>").append(v.name))
+                            .appendTo(tbody);
+                        $.each(data.body, function (k, l) {
+                            if (l.superCode == v.code) {
+                                $("<tr class='child-module'></tr>")
+                                    .append($("<td class='child-module-name'></td>").append(l.name + "："))
+                                    .append($("<td class='child-module-power'></td>")
+                                        .append($("<label></label>").append(demp.findFind(l)))
+                                        .append($("<label></label>").append(demp.findAdd(l)))
+                                        .append($("<label></label>").append(demp.findModify(l)))
+                                        .append($("<label></label>").append(demp.findDelete(l)))
+                                    )
+                                    .appendTo(tbody);
+                            }
+                        });
+                    }
+                });
+            });
+        },
+        findFind: function (l) {
+            return "<input type='checkbox' " + $.findChecked(l.find) + " onclick='demp.setRoleSecureValid(this, \"" + l.code + "\", " + type.FIND + ")' />查询";
+        },
+        findDelete: function (l) {
+            return "<input type='checkbox' " + $.findChecked(l.del) + " onclick='demp.setRoleSecureValid(this, \"" + l.code + "\", " + type.DELETE + ")' />删除";
+        },
+        findModify: function (l) {
+            return "<input type='checkbox' " + $.findChecked(l.modify) + " onclick='demp.setRoleSecureValid(this, \"" + l.code + "\", " + type.MODIFY + ")' />修改";
+        },
+        findAdd: function (l) {
+            return "<input type='checkbox' " + $.findChecked(l.add) + "  onclick='demp.setRoleSecureValid(this, \"" + l.code + "\", " + type.ADD + ")' />添加";
+        },
+
+        setRoleSecureValid: function (obj, code, type) {
+            if (!code) return;
+            $.post('role/setRoleSecureValid', {
+                role: curRoleId,
+                code: code,
+                type: type,
+                add: $(obj).is(':checked')
+            }, function (data) {
+                if (!$.isSuccess(data)) return;
+                Dialog.msg(data.body, BootstrapDialog.TYPE_SUCCESS);
+            }, 'json');
+        }, showRoleModal: function () {
+            $('#roleModal').modal();
+
+        }
+    };
+</script>
+</body>
+</html>

@@ -1,0 +1,169 @@
+<!DOCTYPE html> <!-- html定义 -->
+
+<html lang="en" xmlns="http://www.w3.org/1999/html">
+
+<head>
+
+    <meta charset="utf-8"> <!-- 页面编码 -->
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"> <!-- 在IE运行最新的渲染模式 -->
+    <meta name="viewport" content="width=device-width, initial-scale=1"> <!-- 初始化移动浏览器显示 -->
+    <title>登录</title>
+    <link href="css/bootstrap.css" rel="stylesheet"/>
+    <link href="css/fileinput.css" media="all" rel="stylesheet" type="text/css"/>
+    <link href="css/bootstrap-dialog.min.css" rel="stylesheet"/>
+    <link href="css/common.css" rel="stylesheet"/>
+    <link rel="stylesheet" href="css/bootstrap-table.css">
+</head>
+<body>
+<nav class="navbar navbar-inverse navbar-fixed-top">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a href=index.html>
+                <img alt="Brand" src="image/logo.png" class="img-responsive img-circle"  style="width:50px;height: 50px;">
+            </a>
+        </div>
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1"  style="color:white">
+            <ul class="nav navbar-nav navbar-list"></ul>
+            <ul class="nav navbar-nav navbar-right">
+                <li><a href="javascript:void(0)" class="acctInfo hide"><span class="glyphicon glyphicon-user"></span>&nbsp;
+                </a></li>
+                <li><a href="javascript:void(0)" onclick="exit()">注销</a></li>
+            </ul>
+        </div>
+    </div><!-- /.container-fluid -->
+</nav>
+
+<div class="container" style="padding-top:70px;">
+
+    <div class="row" style="text-align: center;">
+        <button type="button" class="btn btn-primary apply-btn">申请专利统计</button>
+        <button type="button" class="btn btn-primary authorize-btn">授权专利统计</button>
+        <button type="button" class="btn btn-primary effective-btn">有效专利统计</button>
+        <input type="hidden" value="0" id="type"/>
+    </div>
+    <div class="row">
+        <tr>
+            <td class="emi-key"><span>*</span>选择功能区或者行政区:</td>
+            <td colspan="5">
+                <label class="emi-label"><input type="radio" class="functionOrRegion" name="functionOrRegion" value="1" checked/>行政区</label>
+                <label class="emi-label"><input type="radio" class="functionOrRegion" name="functionOrRegion" value="0"/>功能区</label>
+            </td>
+        </tr>
+    </div>
+    <div class="row" style="padding-top: 30px;text-align:center;">
+        <div class="col-md-12">
+            <div id="main" style="width: 500px;height:400px;"></div>
+        </div>
+    </div>
+
+</div>
+
+<!-- footer -->
+<div class="container" style="text-align: center;padding-top: 30px;">
+    Copyright @2017-2018 宁波科技信息研究院版权所有
+</div>
+
+<script src="js/jquery-2.0.3.min.js"></script>
+<script src="js/bootstrap.min.js" type="text/javascript"></script>
+<script src="js/bootstrap-dialog.min.js"></script>
+<script src="js/bootstrap-pagy.min.js"></script>
+<script src="js/common.js"></script>
+<script src="js/chart/Chart-1.0.1-beta.4.js"></script>
+<script src="js/bootstrap-table.js"></script>
+<script src="js/bootstrap-table-zh-CN.js"></script>
+<script src="js/echarts.js"></script>
+
+<script type="text/javascript">
+    $(function () {
+        var moduleCode = '06001';
+        function initFun() {
+            if (secure.find) {
+            }
+        };
+
+        $.findMenu(moduleCode, initFun);
+
+        initChart();
+
+        $('button.authorize-btn').on('click',function () {
+            $('#type').val("1");
+            initChart();
+        })
+
+        $('button.effective-btn').on('click',function () {
+            $('#type').val("2");
+            initChart();
+        })
+        $('.functionOrRegion').on('click',function () {
+            initChart();
+        })
+
+    });
+
+    <!-- 与图相关函数 -->
+    function initChart() {
+        var myChart = echarts.init(document.getElementById('main'));
+        var functionOrRegion;
+        var radio = document.getElementsByName("functionOrRegion");
+        for(i=0;i<radio.length;i++) {
+            if(radio[i].checked) {
+                functionOrRegion = radio[i].value;
+            }
+        }
+        // 异步加载数据
+        $.post('address/getDataPrecision', {
+            type: $('#type').val(),
+            functionOrRegion:functionOrRegion
+        }, function (result) {
+            myChart.setOption({
+                tooltip: {
+                    trigger: 'item',
+                    formatter: "{a} <br/>{b}: {c} ({d}%)"
+                },
+                legend: {
+                    orient: 'vertical',
+                    x: 'left',
+                    data: ['正确数', '错误数', '其他情况']
+                },
+                series: [
+                    {
+                        name: '正确率',
+                        type: 'pie',
+                        radius: ['50%', '70%'],
+                        avoidLabelOverlap: false,
+                        label: {
+                            normal: {
+                                show: false,
+                                position: 'center'
+                            },
+                            emphasis: {
+                                show: true,
+                                textStyle: {
+                                    fontSize: '30',
+                                    fontWeight: 'bold'
+                                }
+                            }
+                        },
+                        labelLine: {
+                            normal: {
+                                show: false
+                            }
+                        },
+                        data: result.body
+                    }
+                ]
+            })
+        })
+    }
+    <!-- 与图相关函数 -->
+
+</script>
+</body>
+</html>

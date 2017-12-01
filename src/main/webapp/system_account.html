@@ -1,0 +1,374 @@
+<!DOCTYPE html> <!-- html定义 -->
+<html lang="en" xmlns="http://www.w3.org/1999/html">
+<head>
+    <meta charset="utf-8"> <!-- 页面编码 -->
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"> <!-- 在IE运行最新的渲染模式 -->
+    <meta name="viewport" content="width=device-width, initial-scale=1"> <!-- 初始化移动浏览器显示 -->
+    <title></title>
+
+    <!-- Bootstrap -->
+    <link href="css/bootstrap.css" rel="stylesheet"> <!-- 载入Bootstrap的CSS样式 -->
+    <link href="css/bootstrap-dialog.min.css" rel="stylesheet"/>
+    <link href="css/common.css" rel="stylesheet"/>
+    <style>
+        .img-height{
+            height:160px;
+        }
+
+    </style>
+</head>
+
+<body>
+<nav class="navbar navbar-inverse navbar-fixed-top">
+    <div class="container-fluid">
+        <div class="col-md-1">
+            <!-- Brand and toggle get grouped for better mobile display -->
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a href=index2.html>
+                    <img alt="Brand" src="image/logo.png" class="img-responsive img-circle"  style="width:50px;height: 50px;">
+                </a>
+            </div>
+        </div>
+        <div class="col-md-11">
+            <!-- Collect the nav links, forms, and other content for toggling -->
+            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1"  style="color:white">
+
+                <div clas="col-md-6"><ul class="nav navbar-nav navbar-list"></ul></div>
+                <div class="col-md-4"></div>
+                <div class="col-md-2">
+                    <ul class="nav navbar-nav" style="padding-right: 10px;">
+                        <li><a href="javascript:void(0)" class="acctInfo hide"><span class="glyphicon glyphicon-user"></span>&nbsp;
+                        </a></li>
+                        <li><a href="javascript:void(0)" onclick="exit()">注销</a></li>
+                    </ul>
+                </div>
+
+
+            </div><!-- /.navbar-collapse -->
+        </div>
+    </div><!-- /.container-fluid -->
+</nav>
+
+<div class="container main main-container" style="padding-top:70px;">
+    <div class="row">
+        <div class="container breadcrumb-container ">
+            <ol class="breadcrumb"></ol>
+        </div>
+        <div class="col-md-6">
+
+            <div class="input-group">
+                <input type="text" class="form-control text-search" placeholder="请输入搜索内容...">
+                <div class="input-group-btn">
+                    <button type="button" class="btn btn-primary btn-search"><span
+                            class="glyphicon glyphicon-search"></span>搜索
+                    </button>
+                </div><!-- /btn-group -->
+            </div><!-- /input-group -->
+
+
+        </div>
+        <div class="col-md-6 text-align-right">
+            <button type="button" class="btn btn-primary add-btn" data-toggle="modal" data-target="#add-account"><span
+                    class="glyphicon glyphicon-plus"></span>&nbsp;新增帐号
+            </button>
+        </div>
+    </div>
+
+    <table class="table table-bordered table-hover table-responsive" style="margin-top:20px;">
+        <thead>
+        <th style="width:10%;">编号</th>
+        <th style="width:10%;">账户名</th>
+        <th style="width:15%;">昵称</th>
+        <th style="width:15%;">创建时间</th>
+        <th style="width:20%;">负责人</th>
+        <th style="width:30%;">操作</th>
+        </thead>
+        <tbody class="tbody-list"></tbody>
+    </table>
+    <!-- 分页-->
+    <nav id="pagination">
+        <ul class="pagination"></ul>
+    </nav>
+    <h2 class="content-title">
+        <em style="float: left;marin-top:40px;margin-right: 13px;width: 5px;height: 25px;background: #2d82c5;"></em>
+        精品内容</h2>
+    <div class="row" style="padding-top: 20px;">
+        <div class="col-md-3">
+            <div class="thumbnail">
+                <a href="#" rel="tooltip" data-toggle="tooltip" data-placement="top" title="滚动图">
+                    <img src="image/slide1.jpg" alt="滚动图" class="img-height" >
+                </a>
+                <div class="caption">
+                    <div class="btn-group" role="group" >
+                        <a href="#" class="btn btn-default" rel="popover" data-placement="left" data-content="hello" data-trigger="hover"><i class="glyphicon glyphicon-info-sign"></i></a>
+                        <a href="#" class="btn btn-default"><i class="glyphicon glyphicon-comment"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="thumbnail">
+                <img src="image/slide2.jpg" alt="滚动图">
+                <div class="caption">
+                    <h3>Thumbnail label</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="thumbnail">
+                <img src="image/slide3.jpg" alt="滚动图">
+                <div class="caption">
+                    <h3>Thumbnail label</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="thumbnail">
+                <img src="image/slide3.jpg" alt="滚动图">
+                <div class="caption">
+                    <h3>Thumbnail label</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<div class="modal fade add-box sm-modal" id="add-account">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header modal-header-primary"><h4 class="modal-title">添加账户</h4></div>
+            <div class="modal-body">
+                <input type="text" class="form-control acctName" placeholder="账户名称 / 唯一键" maxlength="64" value=""/>
+                <input type="text" class="form-control margin-top-15 acctNick" placeholder="账户昵称" maxlength="64"
+                       value=""/>
+                <input type="password" class="form-control margin-top-15 acctPass" placeholder="账户密码" maxlength="64"
+                       value=""/>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default btn-cancel" data-dismiss="modal">取消</button>
+                <button type="button" class="btn btn-primary btn-save">添加</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade acct-role-module-box sm-modal" id="modify-account">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header modal-header-primary">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title">角色管理</h4>
+            </div>
+            <div class="modal-body" style="max-height:350px; overflow-y:auto">
+                <table class="module-table  table-bordered table-hover">
+
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal">取消</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade acct-role-module-box sm-modal" id="delete-account">
+    <div class="modal-dialog">
+        <div class="modal-content">
+        </div>
+    </div>
+</div>
+
+<div class="container" style="text-align: center">
+    Copyright @2016-2017 宁波柯氏水果有限公司版权所有
+</div>
+<script src="js/jquery-2.0.3.min.js"></script>
+<script src="js/bootstrap.min.js"></script>
+<script src="js/bootstrap-dialog.min.js"></script>
+<script src="js/bootstrap-pagy.min.js"></script>
+<script src="js/common.js"></script>
+<script type="text/javascript">
+    $(function () {
+        var moduleCode = '04001';
+        var curAcctName = "";
+
+        $('[data-toggle="popover"]').popover();
+
+        function initFun() {
+            if (secure.find) {
+                //dialog = BootstrapDialog.loading();
+                demp.findAccountList(1);
+                demp.findAccountPage(1);
+
+            }
+            if (secure.add)
+                $('button.add-btn').removeClass('hide');
+            if (!secure.add)
+                $('button.add-btn').remove();
+        };
+
+        $.findMenu(moduleCode, initFun);
+        $('button.btn-save').on('click', function () {
+            demp.save();
+        })
+        $('button.btn-cancel').on('click', function () {
+            demp.showAddBox();
+        })
+        $('button.btn-search').on('click', function () {
+            demp.findAccountList(1);
+            demp.findAccountPage(1);
+        })
+        demp.findAccountList(1);
+        demp.findAccountPage(1);
+
+
+    });
+    var demp = {
+        showAddBox: function () {
+            $('input.acctName').val('');
+            $('input.acctNick').val('');
+            $('input.acctPass').val('');
+
+        },
+        save: function () {
+            $.verify = true;
+            var acctName = $.verifyForm('input.acctName');
+            var acctNick = $.verifyForm('input.acctNick');
+            var acctPass = $.verifyForm('input.acctPass');
+            if(!$.verify) return;
+            $.post('account/addAccount', {
+                    user: acctName,
+                    nick: acctNick,
+                    pass: acctPass
+                }, function (data) {
+                    $('#add-account').modal('hide');
+                    if (!$.isSuccess(data)) return;
+                    if (typeof data != 'object') {
+                        data = $.parseJSON(data);
+                    }
+                    new BootstrapDialog({
+                        title: '标题',
+                        message: data.body,
+                        type: BootstrapDialog.TYPE_SUCCESS
+                    }).open();
+                    demp.findAccountList(1);
+                }
+            );
+
+
+        },
+        findAccountList: function (page) {
+            var tbody = $('tbody.tbody-list').empty();
+            var search = $('input.text-search').val();
+            $.post('account/findAccountList', {
+                page: page,
+                search: search
+
+            }, function (data) {
+                if (!$.isSuccess(data)) return;
+                /* console.log(data.body);*/
+                if (typeof data != 'object') {
+                    data = $.parseJSON(data);
+                }
+                $.each(data.body, function (index, value) {
+                    $('<tr></tr>')
+                        .append($("<td></td>").append(value.acctId))
+                        .append($("<td></td>").append(value.acctName))
+                        .append($("<td></td>").append(value.acctNickName))
+                        .append($("<td></td>").append(value.createTime))
+                        .append($("<td></td>").append(value.creator))
+                        .append($("<td></td>").append(demp.getBtns(index, value)))
+                        .appendTo(tbody);
+                });
+            })
+        },
+        findAccountPage: function (page) {
+
+            $("#pagination ul").empty();
+            var search = $('input.text-search').val();
+            $.post('account/findAccountPage', {
+                page: page,
+                search: search
+
+            }, function (data) {
+                console.log(data);
+                if (typeof data != 'object') {
+                    data = $.parseJSON(data);
+                }
+                data.body.nowPage = 1;
+
+                $.setPage(data.body, demp.findAccountList);
+            })
+        },
+        getBtns: function (index, value) {
+            var btn = "";
+            if(secure==null) return;
+            //btn += secure.modify ? "<button type='button' class='btn btn-primary btn-xs'><span class='glyphicon glyphicon-pencil'></span>&nbsp;编辑</button>":"";
+            btn += secure.modify ? "<button type='button' class='btn btn-success btn-xs' data-toggle='modal' data-target='#modify-account' onclick='demp.roleMgr(\"" + value.acctName + "\")'><span class='glyphicon glyphicon-star'></span>&nbsp;管理</button>":"";
+            btn += "&nbsp;&nbsp;";
+            btn += secure.del ?"<button type='button' class='btn btn-danger btn-xs' onclick='demp.hintDelete(\"" + value.acctId + "\")'><span class='glyphicon glyphicon-remove'></span>&nbsp;删除</button>":"";
+            return btn;
+        },
+        roleMgr: function (acctName) {
+            if (!acctName) return;
+            var tbody = $('table.module-table').empty();
+            curAcctName = acctName;
+            $.getJSON('account/findRole', {acctName: acctName}, function (data) {
+                if (typeof data != 'object') {
+                    data = $.parseJSON(data);
+                }
+                console.log(data.body);
+                $.each(data.body, function (i, v) {
+                    $("<tr class='acctRole'></tr>")
+                        .append($("<td></td>").append($("<label></label>").append(demp.findRoleCheckBox(v) + v.roleName)))
+                        .appendTo(tbody);
+                });
+            });
+        },
+        findRoleCheckBox: function (v) {
+            var check_val = "<input type='checkbox' " + $.findChecked(v.opt) + " onclick='demp.setAccountRole(this," + v.id + ")' code='" + v.id + "' />";
+
+            console.log(check_val);
+            return check_val;
+        },
+        setAccountRole: function (obj, id) {
+            if (!id) return;
+            $.post('account/addAccountRole', {
+                id: id,
+                account: curAcctName,
+                add: $(obj).is(':checked')
+            }, function (data) {
+                if (!$.isSuccess(data)) return;
+            }, 'json');
+        },
+        hintDelete: function (id) {
+            if (!id) return;
+            Dialog.confirm("请确定是否删除该帐号?", function (result) {
+                if (!result) return;
+                dialog = Dialog.isSubmitted();
+                $.getJSON('account/delAccount', {id: id}, function (data) {
+                    dialog.close();
+                    if (!$.isSuccess(data)) return;
+                    Dialog.msg(data.body, BootstrapDialog.TYPE_SUCCESS);
+                    demp.findAccountList(1);
+                });
+            });
+        }
+
+    }
+    var account = {
+        'showRoleModal': function () {
+            $('#roleModal').modal();
+        }
+    };
+
+</script>
+</body>
+
+</html>
