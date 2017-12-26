@@ -4,6 +4,8 @@ package com.circle.controller;
 import com.circle.service.IAddressService;
 import com.circle.util.json.JsonReturn;
 import com.circle.vo.AddressModel;
+import jxl.common.Logger;
+import org.apache.log4j.spi.LoggerFactory;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFRow;
@@ -24,8 +26,7 @@ import java.util.*;
 @Controller
 @RequestMapping(value = "address")
 public class AddressController extends AbstractController {
-
-    private static final String FILENAME = "C://study//test.xls";
+    private static final Logger logger = Logger.getLogger(AddressController.class);
 
     @Autowired
     private IAddressService service;
@@ -163,9 +164,11 @@ public class AddressController extends AbstractController {
 
     }
 
+
     @RequestMapping(value = "importExcel", method = RequestMethod.POST)
     @ResponseBody
     public JsonReturn importExcel(@RequestParam("file") MultipartFile file, @RequestParam String state, @RequestParam int type, HttpServletRequest request) {
+        logger.info("开始进行上传文件。。。。。。");
         try {
             //1. 首先判断文件后缀
             String originalFilename = file.getOriginalFilename();
@@ -193,7 +196,7 @@ public class AddressController extends AbstractController {
                 return JsonReturn.buildFailureWithEmptyBody();
             }
         } catch (Exception e) {
-            return new JsonReturn(false, e.getMessage());
+            return JsonReturn.buildFailure(e.getMessage());
         }
         return JsonReturn.buildSuccessWithEmptyBody();
     }

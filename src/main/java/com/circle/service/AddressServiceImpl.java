@@ -14,11 +14,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
-
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.concurrent.*;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 
 @Service
@@ -100,7 +102,7 @@ public class AddressServiceImpl extends BaseService<AddressModel> implements IAd
 
         fixedThreadPool.shutdown();
         long end = System.currentTimeMillis();
-        return JsonReturn.buildSuccess(ids.length +" 条数据 花费 "+ (end-begin) + "毫秒");
+        return JsonReturn.buildSuccess(ids.length +" 条数据 花费 "+ (end-begin)/60000 + "分钟");
     }
 
     public JsonReturn deleteAddress(Integer[] ids) {
@@ -127,43 +129,47 @@ public class AddressServiceImpl extends BaseService<AddressModel> implements IAd
         List<StaticsDto> staticsDtos = dao.getAllRegions(type);
         Map<String, List<StaticsDto>> map = new HashMap<String, List<StaticsDto>>();
         for (StaticsDto staticsDto : staticsDtos) {
-            if (map.get(staticsDto.getRegion()) == null) {
-                List<StaticsDto> values = new ArrayList<StaticsDto>();
+            List<StaticsDto> values = new ArrayList<StaticsDto>();
+            if (staticsDto.getRegion()!=null && map.get(staticsDto.getRegion()) != null ) {
+
                 values.add(staticsDto);
-                map.put(staticsDto.getRegion(), values);
-            }else{
-                List<StaticsDto> values = map.get(staticsDto.getRegion());
-                values.add(staticsDto);
+
             }
+            map.put(staticsDto.getRegion(), values);
         }
+
+
 
         Iterator<Map.Entry<String, List<StaticsDto>>> it = map.entrySet().iterator();
         while (it.hasNext()) {
             Map.Entry<String, List<StaticsDto>> entry = it.next();
             List<StaticsDto> values = entry.getValue();
             StaticsModel model = new StaticsModel();
-            model.setRegion(entry.getKey());
-            for (StaticsDto staticsDto : values) {
-                if ("发明".equals(staticsDto.getPatent_type())) {
-                    model.setInvention_number(staticsDto.getSum());
+            if (entry.getKey() != null && entry.getKey().length() > 0) {
+                model.setRegion(entry.getKey());
+                for (StaticsDto staticsDto : values) {
+                    if ("发明".equals(staticsDto.getPatent_type())) {
+                        model.setInvention_number(staticsDto.getSum());
 
-                } else if ("外观设计".equals(staticsDto.getPatent_type())) {
-                    model.setDesign_number(staticsDto.getSum());
+                    } else if ("外观设计".equals(staticsDto.getPatent_type())) {
+                        model.setDesign_number(staticsDto.getSum());
 
-                } else if ("实用新型".equals(staticsDto.getPatent_type())) {
-                    model.setUse_number(staticsDto.getSum());
+                    } else if ("实用新型".equals(staticsDto.getPatent_type())) {
+                        model.setUse_number(staticsDto.getSum());
+
+                    }
 
                 }
+                model.setCreate_date(new Date());
+                model.setType(type);
+                model.setSum(model.getDesign_number()+model.getInvention_number()+model.getUse_number());
+                if (staticsDAO.getByRegion(entry.getKey(),type) != null) {
+                    staticsDAO.update(model);
+                }else{
+                    staticsDAO.insert(model);
+                }
+            }
 
-            }
-            model.setCreate_date(new Date());
-            model.setType(type);
-            model.setSum(model.getDesign_number()+model.getInvention_number()+model.getUse_number());
-            if (staticsDAO.getByRegion(entry.getKey(),type) != null) {
-                staticsDAO.update(model);
-            }else{
-                staticsDAO.insert(model);
-            }
 
         }
 
@@ -176,7 +182,13 @@ public class AddressServiceImpl extends BaseService<AddressModel> implements IAd
     }
 
     public JsonReturn getDataPrecision(int type,Integer functionOrRegion,String time) {
+
+        if (time.equals("")) {
+            SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM");
+             time=sdf.format(new java.util.Date());
+        }
         String[] str = this.getTimeRange(time);
+
         String start = str[0];
         String end = str[1];
 

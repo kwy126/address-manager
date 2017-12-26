@@ -28,7 +28,7 @@
         <a href="apply.html" class="item"><i class="list layout icon"></i> 申请管理</a>
         <a href="authorize.html" class="item"><i class="list layout icon"></i> 授权管理</a>
         <a href="effective.html" class="item"><i class="list layout icon"></i> 有效管理</a>
-        <a href="region_manager.html" class="item"><i class="list layout icon"></i>分词库管理</a>
+        <!--<a href="region_manager.html" class="item"><i class="list layout icon"></i>分词库管理</a>-->
         <div class="right item">
             <div class="ui dropdown">
                 <a class="acctInfo"></a>
@@ -270,7 +270,7 @@
     var pageNumber =0;
     var totalPage = 0;
 
-    var moduleCode = '09';
+    var moduleCode = '02';
     var functionOrRegion = 0;
     var time;
     var searchTime;
@@ -392,7 +392,7 @@
                         $('.ui.dimmer').removeClass('active');
                         $('.ui.message').removeClass('hidden');
                         $('.ui.message').addClass('negative');
-                        $('.myMessage').text(data.body);
+                        $('.myMessage').text(res.body);
                         // findAddressList(page);
                         findAddressPage(page);
                     }
