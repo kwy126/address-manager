@@ -43,24 +43,24 @@ public class AddressLngLatExchange {
     }
 
     //获取指定地点经纬度
-    public static String[] getLngLatFromOneAddr(String address){
-        if(StringUtils.isBlank(address)) {
+    public static String[] getLngLatFromOneAddr(String address) {
+        if (StringUtils.isBlank(address)) {
             LOGGER.error("地址（" + address + "）为null或者空");
             return null;
         }
         Map<String, String> params = new HashMap<String, String>();
         params.put("address", address);
         params.put("output", OUTPUT);
-       params.put("key", KEY);
-        String result = HttpUtils.URLPost(GET_LNG_LAT_URL,params,"");
+        params.put("key", KEY);
+        String result = HttpUtils.URLPost(GET_LNG_LAT_URL, params, "");
         JSONObject jsonObject = JSONObject.parseObject(result);
         String[] lngLatArr = new String[2];
         //拿到返回报文的status值，高德的该接口返回值有两个：0-请求失败，1-请求成功；
         int status = Integer.valueOf(jsonObject.getString("status"));
-        if(status == 1) {
+        if (status == 1) {
             System.out.println(jsonObject.toString());
             JSONArray jsonArray = jsonObject.getJSONArray("geocodes");
-            for(int i = 0; i < jsonArray.size(); i++) {
+            for (int i = 0; i < jsonArray.size(); i++) {
                 JSONObject json = jsonArray.getJSONObject(i);
                 String lngLat = json.getString("location");
                 lngLatArr = lngLat.split(",");
@@ -79,56 +79,56 @@ public class AddressLngLatExchange {
         params.put("subdistrict", "3");
         params.put("key", KEY);
         params.put("extensions", "base");
-        String result = HttpUtils.URLPost(DISTRICT_URL,params,"");
+        String result = HttpUtils.URLPost(DISTRICT_URL, params, "");
         JSONObject jsonObject = JSONObject.parseObject(result);
         //拿到返回报文的status值，高德的该接口返回值有两个：0-请求失败，1-请求成功；
         int status = Integer.valueOf(jsonObject.getString("status"));
-        if(status == 1) {
-           // System.out.println(jsonObject.toString());
+        if (status == 1) {
+            // System.out.println(jsonObject.toString());
             JSONArray jsonArray = jsonObject.getJSONArray("districts");
             //System.out.println(jsonArray.size());
 
-            for(int i = 0; i < jsonArray.size(); i++) {
+            for (int i = 0; i < jsonArray.size(); i++) {
                 JSONObject json = jsonArray.getJSONObject(i);
                 JSONArray provinceArray = json.getJSONArray("districts");
-               // StringBuilder sb = new StringBuilder();
-                for(int j = 0; j < provinceArray.size(); j++) {
+                // StringBuilder sb = new StringBuilder();
+                for (int j = 0; j < provinceArray.size(); j++) {
                     JSONObject province = provinceArray.getJSONObject(j);
                     // 输出省份
                     //System.out.println("输出省份-----------------");
                     String level = province.getString("level");
                     String name = province.getString("name");
-                  //  System.out.println("level=" + level + " , name=" + name);
+                    //  System.out.println("level=" + level + " , name=" + name);
                     if (level.equals("province")) {
                         System.out.println(name + "\t" + "province" + "\t" + "1");
                     }
                     //buildString(name,sb , level);
                     JSONArray cityArray = province.getJSONArray("districts");
-                    for(int z= 0; z < cityArray.size(); z++) {
+                    for (int z = 0; z < cityArray.size(); z++) {
                         JSONObject city = cityArray.getJSONObject(z);
                         // 输出区
                         //System.out.println("输出city-----------------");
                         level = city.getString("level");
                         name = city.getString("name");
-                       // System.out.println("level=" + level + " , name=" + name);
+                        // System.out.println("level=" + level + " , name=" + name);
                         if (level.equals("city")) {
-                            System.out.println( name + "\t" + "city" + "\t" + "2");
+                            System.out.println(name + "\t" + "city" + "\t" + "2");
                         }
                         //sb = new StringBuilder();
-                       // buildString(name, sb, level);
+                        // buildString(name, sb, level);
                         JSONArray districtArray = city.getJSONArray("districts");
                         for (int k = 0; k < districtArray.size(); k++) {
                             JSONObject district = districtArray.getJSONObject(k);
-                           // System.out.println("输出district-----------------");
+                            // System.out.println("输出district-----------------");
                             level = district.getString("level");
                             name = district.getString("name");
                             //System.out.println("level=" + level + " , name=" + name);
                             if (level.equals("district")) {
-                                System.out.println( name + "\t" + "area" + "\t" + "3");
+                                System.out.println(name + "\t" + "area" + "\t" + "3");
                             }
-                           // sb = new StringBuilder();
+                            // sb = new StringBuilder();
 
-                           // buildString(name, sb, level);
+                            // buildString(name, sb, level);
                         }
                     }
 
@@ -140,7 +140,7 @@ public class AddressLngLatExchange {
         } else {
             String errorMsg = jsonObject.getString("info");
         }
-        return ;
+        return;
     }
 
     public void search(String keywords) {
@@ -152,21 +152,21 @@ public class AddressLngLatExchange {
         params.put("page", "1");
         params.put("key", KEY);
         params.put("extensions", "base");
-        String result = HttpUtils.URLPost(SEARCH_URL,params,"");
+        String result = HttpUtils.URLPost(SEARCH_URL, params, "");
         JSONObject jsonObject = JSONObject.parseObject(result);
         //拿到返回报文的status值，高德的该接口返回值有两个：0-请求失败，1-请求成功；
         int status = Integer.valueOf(jsonObject.getString("status"));
-        if(status == 1) {
-             System.out.println(jsonObject.toString());
+        if (status == 1) {
+            System.out.println(jsonObject.toString());
             JSONArray jsonArray = jsonObject.getJSONArray("pois");
             System.out.println(jsonArray.size());
-            for(int i = 0; i < jsonArray.size(); i++) {
+            for (int i = 0; i < jsonArray.size(); i++) {
 
             }
         }
     }
 
-    private  void buildString(String name, StringBuilder sb,String level) {
+    private void buildString(String name, StringBuilder sb, String level) {
         if (level.equals("province")) {
             sb.append(name);
             sb.append("\t");
@@ -185,15 +185,15 @@ public class AddressLngLatExchange {
             sb.append("area");
             sb.append("\t");
             sb.append("3");
-        } else{
+        } else {
 
         }
         name = sb.toString();
-        FileUtil.writeToFile(name,pathName);
+        FileUtil.writeToFile(name, pathName);
     }
 
-    public static List<Shop> initialData(String lonLat, String keyword, List<Shop> shopListSon){
-        if(StringUtils.isBlank(keyword)) {
+    public static List<Shop> initialData(String lonLat, String keyword, List<Shop> shopListSon) {
+        if (StringUtils.isBlank(keyword)) {
             LOGGER.error("地址（" + keyword + "）为null或者空");
         }
         Map<String, String> params = new HashMap<String, String>();
@@ -208,32 +208,32 @@ public class AddressLngLatExchange {
         params.put("offset", "20");
         params.put("page", "1");
         params.put("key", KEY);
-        String result = HttpUtils.URLGet(GET_LNG_PIO_URL,params,"UTF-8");
+        String result = HttpUtils.URLGet(GET_LNG_PIO_URL, params, "UTF-8");
         JSONObject jsonObject = JSONObject.parseObject(result);
         int statusOne = Integer.valueOf(jsonObject.getString("status"));
         //第一次获取数据时做的判断
-        if(statusOne==1){
-            int count=Integer.valueOf(jsonObject.getString("count"));
-            int pageNumber=count/20;
-            int remainder=count%20;
-            if(remainder>0)pageNumber=pageNumber+1;
-            for(int i=1;i<=pageNumber;i++){
+        if (statusOne == 1) {
+            int count = Integer.valueOf(jsonObject.getString("count"));
+            int pageNumber = count / 20;
+            int remainder = count % 20;
+            if (remainder > 0) pageNumber = pageNumber + 1;
+            for (int i = 1; i <= pageNumber; i++) {
                 params.put("page", String.valueOf(i));
-                result = HttpUtils.URLGet(GET_LNG_PIO_URL,params,"UTF-8");
+                result = HttpUtils.URLGet(GET_LNG_PIO_URL, params, "UTF-8");
                 JSONObject jsonObject2 = JSONObject.parseObject(result);
-                System.out.println("+++++++++"+result);
+                System.out.println("+++++++++" + result);
                 //拿到返回报文的status值，高德的该接口返回值有两个：0-请求失败，1-请求成功；
                 int status = Integer.valueOf(jsonObject2.getString("status"));
-                if(status == 1) {
+                if (status == 1) {
                     JSONArray jsonArray = jsonObject2.getJSONArray("pois");
-                    if(jsonArray.size()>0){
-                        for(int j =0;j<jsonArray.size();j++){
-                            Shop shop =new Shop();
-                            JSONObject jsonObject1 =jsonArray.getJSONObject(j);
+                    if (jsonArray.size() > 0) {
+                        for (int j = 0; j < jsonArray.size(); j++) {
+                            Shop shop = new Shop();
+                            JSONObject jsonObject1 = jsonArray.getJSONObject(j);
                             shop.setShopName(jsonObject1.getString("name"));
                             shop.setSpecificAddress(jsonObject1.getString("address"));
                             shop.setId(jsonObject1.getString("id"));
-                            String [] initLonLat =jsonObject1.getString("location").split(",");
+                            String[] initLonLat = jsonObject1.getString("location").split(",");
                             shop.setLongitude(initLonLat[0]);
                             shop.setLatitude(initLonLat[1]);
                             shopListSon.add(shop);
@@ -253,7 +253,7 @@ public class AddressLngLatExchange {
     }
 
     //写入excel中
-    public static void creatExcel(List<Shop> shopList){
+    public static void creatExcel(List<Shop> shopList) {
         HSSFWorkbook workbook = new HSSFWorkbook();
         //第二部，在workbook中创建一个sheet对应excel中的sheet
         HSSFSheet sheet = workbook.createSheet("高德地图数据");
@@ -296,7 +296,7 @@ public class AddressLngLatExchange {
 
     public static double Distance(double long1, double lat1, double long2, double lat2) {
         double a, b, R;
-        R =6371; // 地球半径 6371km
+        R = 6371; // 地球半径 6371km
         lat1 = lat1 * Math.PI / 180.0;
         lat2 = lat2 * Math.PI / 180.0;
         a = lat1 - lat2;
@@ -309,35 +309,35 @@ public class AddressLngLatExchange {
                 * R
                 * Math.asin(Math.sqrt(sa2 * sa2 + Math.cos(lat1)
                 * Math.cos(lat2) * sb2 * sb2));
-        BigDecimal bigDecimal = new BigDecimal(d*1000);
+        BigDecimal bigDecimal = new BigDecimal(d * 1000);
         Double din = bigDecimal.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
-        return din ;
+        return din;
     }
 
-    public static List<Shop> readFile(String filename){
-        List<Shop> shopList =new ArrayList<Shop>();
-        Workbook wb=null;
-        Cell cell=null;
+    public static List<Shop> readFile(String filename) {
+        List<Shop> shopList = new ArrayList<Shop>();
+        Workbook wb = null;
+        Cell cell = null;
         try {
-            File f=new File(filename);
-            InputStream in=new FileInputStream(f);             //创建输入流
-            wb= Workbook.getWorkbook(in);                       //获取Excel文件对象
-            jxl.Sheet s=wb.getSheet(0);                        //获取文件的指定工作表，默认为第一个
+            File f = new File(filename);
+            InputStream in = new FileInputStream(f);             //创建输入流
+            wb = Workbook.getWorkbook(in);                       //获取Excel文件对象
+            jxl.Sheet s = wb.getSheet(0);                        //获取文件的指定工作表，默认为第一个
             String value = null;
-            for(int i=1;i<s.getRows();i++){//表头目录不需要，从第一行开始
-                Shop shop =new Shop();
-                for(int j=0;j<s.getColumns();j++){
-                    cell=s.getCell(j, i);
-                    value=cell.getContents();
-                    if(j==0){
+            for (int i = 1; i < s.getRows(); i++) {//表头目录不需要，从第一行开始
+                Shop shop = new Shop();
+                for (int j = 0; j < s.getColumns(); j++) {
+                    cell = s.getCell(j, i);
+                    value = cell.getContents();
+                    if (j == 0) {
                         shop.setId(value);
-                    }else if(j==1){
+                    } else if (j == 1) {
                         shop.setShopName(value);
-                    }else if(j==2){
+                    } else if (j == 2) {
                         shop.setSpecificAddress(value);
-                    }else if(j==3){
+                    } else if (j == 3) {
                         shop.setLongitude(value);
-                    }else if(j==4){
+                    } else if (j == 4) {
                         shop.setLatitude(value);
                     }
                 }
@@ -359,7 +359,7 @@ public class AddressLngLatExchange {
     public static void main(String[] args) {
         //readFile("C:\\3.xls");
         AddressLngLatExchange addressLngLatExchange = new AddressLngLatExchange();
-         addressLngLatExchange.search("工业园区");
+        addressLngLatExchange.search("工业园区");
     /*    String[] s = addressLngLatExchange.getLngLatFromOneAddr("工业园区");
 
        Map<String, String> map = new HashMap<String, String>();

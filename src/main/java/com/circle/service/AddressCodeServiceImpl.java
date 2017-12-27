@@ -4,15 +4,19 @@ import com.alibaba.fastjson.JSONObject;
 import com.circle.dao.AddressCodeDAO;
 import com.circle.dao.AddressDAO;
 import com.circle.dao.FunctionCodeDAO;
+import com.circle.dto.GaoDeDto;
 import com.circle.util.address.AddressLngLatExchange;
 import com.circle.util.address.Analyzer;
 import com.circle.util.file.FileUtil;
 import com.circle.util.http.HttpUtils;
 import com.circle.util.json.JsonReturn;
+import com.circle.util.mapper.JsonMapper;
+import com.circle.util.mapper.XmlMapper;
 import com.circle.util.random.IdGenerator;
 import com.circle.vo.AddressCodeModel;
 import com.circle.vo.AddressModel;
 import com.circle.vo.FunctionCodeModel;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -739,25 +743,29 @@ public class AddressCodeServiceImpl extends BaseService<AddressCodeModel> implem
     }
 
     private void invokeAPI(AddressModel model,Map<String,String> map) {
-        String[] s = AddressLngLatExchange.getLngLatFromOneAddr(model.getRequester_address());
+        //String[] s = AddressLngLatExchange.getLngLatFromOneAddr(model.getRequester_address());
 
         Map<String, String> params = new HashMap<String, String>();
-        params.put("longitude", s[0]);
-        params.put("latitude", s[1]);
+        params.put("output", "JSON");
+        params.put("address", model.getRequester_address());
+        params.put("key", "ccf1bf3d1a6294bba2dc2caf85366452");
 
-        String str = HttpUtils.URLGet("http://ditu.amap.com/service/regeo", params, "UTF-8");
-        JSONObject obj = JSONObject.parseObject(str);
-        String value = (String) obj.get("status");
+        if (StringUtils.isNotEmpty(model.getCity())) {
+            params.put("city", model.getCity());
+        }
 
-        if (model.getRegion() == null && obj.size() < 2) {
-            if (value.equals("1")) {
-                String dataValue = obj.get("data").toString();
-                JSONObject dataObject = JSONObject.parseObject(dataValue);
-                String desc = dataObject.get("desc").toString();
-                model.setRegion(desc.split(",")[2]);
-                updateFunctionCode(model,map);
+        String str = HttpUtils.URLGet("http://restapi.amap.com/v3/geocode/geo", params, "UTF-8");
+
+        JsonMapper mapper = new JsonMapper();
+        GaoDeDto dto = mapper.fromJson(str, GaoDeDto.class);
+        if (StringUtils.isNotEmpty(str)) {
+            if (dto.getGeocodes().size() == 1) {
+
+                model.setRegion(dto.getGeocodes().get(0).getDistrict());
+                updateFunctionCode(model, map);
             }
         }
+
 
 
           /*  int id = model.getId();

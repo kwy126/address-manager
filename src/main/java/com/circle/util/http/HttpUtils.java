@@ -127,7 +127,6 @@ public class HttpUtils {
         } else {
             strtTotalURL.append(url).append("&").append(getUrl(params, enc));
         }
-        log.debug("GET请求URL = \n" + strtTotalURL.toString());
 
         try {
             getMethod = new GetMethod(strtTotalURL.toString());
