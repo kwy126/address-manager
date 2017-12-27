@@ -6,11 +6,11 @@ import com.circle.dao.AccountDAO;
 import com.circle.dao.AccountRoleDAO;
 import com.circle.dao.RoleDAO;
 import com.circle.dto.RoleDto;
-import com.circle.util.CompareUtil;
-import com.circle.util.SessionKey;
-import com.circle.util.date.DateTimeUtil;
-import com.circle.util.json.JsonReturn;
-import com.circle.util.pageutil.PageUtils;
+import com.circle.utils.CompareUtil;
+import com.circle.utils.SessionKey;
+import com.circle.utils.json.JsonReturn;
+import com.circle.utils.pageutil.PageUtils;
+import com.circle.utils.time.ClockUtil;
 import com.circle.vo.AccountModel;
 import com.circle.vo.AccountRoleModel;
 import com.circle.vo.RoleModel;
@@ -76,9 +76,10 @@ public class AccountServiceImpl extends BaseService<AccountModel> implements IAc
         model.setAcctPassword(pass);
         model.setAcctState(0);
         model.setAcctSuper(0);
-        model.setCreateTime(DateTimeUtil.getCurrentTime());
+        model.setCreateTime(ClockUtil.currentDate());
         model.setCreator(s);
-        model.setTimestamp(new Timestamp(DateTimeUtil.getCurrentTime().getTime()));
+        model.setTimestamp(new Timestamp(ClockUtil.currentTimeMillis()));
+
         dao.create(model);
 
         return JsonReturn.buildSuccess("添加成功！");
@@ -136,7 +137,7 @@ public class AccountServiceImpl extends BaseService<AccountModel> implements IAc
         AccountRoleModel accountRoleModel = new AccountRoleModel();
         accountRoleModel.setAcctName(account);
         accountRoleModel.setRoleLabel(roleModel.getRoleLabel());
-        accountRoleModel.setTimestamp(new Timestamp(DateTimeUtil.getCurrentTime().getTime()));
+        accountRoleModel.setTimestamp(new Timestamp(ClockUtil.currentTimeMillis()));
         accountRoleDAO.create(accountRoleModel);
         return JsonReturn.buildSuccess("添加成功！");
     }

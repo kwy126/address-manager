@@ -5,12 +5,12 @@ import com.circle.constant.PageConstant;
 import com.circle.dao.ModuleDAO;
 import com.circle.dao.RoleDAO;
 import com.circle.dao.RoleModuleDAO;
-import com.circle.util.CompareUtil;
+import com.circle.utils.CompareUtil;
 
-import com.circle.util.date.DateTimeUtil;
-import com.circle.util.json.JsonReturn;
-import com.circle.util.pageutil.PageUtils;
-import com.circle.util.random.IdGenerator;
+import com.circle.utils.json.JsonReturn;
+import com.circle.utils.pageutil.PageUtils;
+import com.circle.utils.random.IdGenerator;
+import com.circle.utils.time.ClockUtil;
 import com.circle.vo.ModuleModel;
 import com.circle.vo.RoleModel;
 import com.circle.vo.RoleModuleModel;
@@ -84,9 +84,9 @@ public class RoleServiceImpl extends BaseService<RoleModel> implements IRoleServ
         model.setRoleName(name);
         model.setRoleDescription(desc);
         model.setRoleLabel(IdGenerator.getId());
-        model.setCreateTime(DateTimeUtil.getCurrentTime());
+        model.setCreateTime(ClockUtil.currentDate());
         model.setCreator(s);
-        model.setTimestamp(new Timestamp(DateTimeUtil.getCurrentTime().getTime()));
+        model.setTimestamp(new Timestamp(ClockUtil.currentTimeMillis()));
         dao.create(model);
 
         return JsonReturn.buildSuccess("添加成功！");
@@ -132,7 +132,7 @@ public class RoleServiceImpl extends BaseService<RoleModel> implements IRoleServ
             }
 
 
-            roleModuleModel.setTimestamp(new Timestamp(DateTimeUtil.getCurrentTime().getTime()));
+            roleModuleModel.setTimestamp(new Timestamp(ClockUtil.currentTimeMillis()));
             roleModuleDAO.create(roleModuleModel);
             return JsonReturn.buildSuccess("添加成功！");
         }else{
@@ -176,7 +176,8 @@ public class RoleServiceImpl extends BaseService<RoleModel> implements IRoleServ
                 roleModuleModel.setModifys(0);
             }
         }
-        roleModuleModel.setTimestamp(new Timestamp(DateTimeUtil.getCurrentTime().getTime()));
+        roleModuleModel.setTimestamp(new Timestamp(ClockUtil.currentTimeMillis()));
+
         return roleModuleModel;
     }
 

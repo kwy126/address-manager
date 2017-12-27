@@ -5,7 +5,7 @@ import javax.servlet.http.HttpSession;
 
 import com.circle.service.IDepartmentService;
 import com.circle.service.IPositionService;
-import com.circle.util.json.JsonReturn;
+import com.circle.utils.json.JsonReturn;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;

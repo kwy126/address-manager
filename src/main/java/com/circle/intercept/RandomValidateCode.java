@@ -1,6 +1,6 @@
 package com.circle.intercept;
 
-import com.circle.util.SessionKey;
+import com.circle.utils.SessionKey;
 
 import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletRequest;

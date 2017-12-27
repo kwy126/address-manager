@@ -1,6 +1,6 @@
 package com.circle.intercept;
 
-import com.circle.util.json.JsonReturn;
+import com.circle.utils.json.JsonReturn;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;

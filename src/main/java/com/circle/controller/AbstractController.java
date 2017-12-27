@@ -1,6 +1,6 @@
 package com.circle.controller;
 
-import com.circle.util.SessionKey;
+import com.circle.utils.SessionKey;
 import com.circle.vo.AccountModel;
 
 import javax.servlet.http.HttpServletRequest;

@@ -1,7 +1,5 @@
 package com.circle.dto;
 
-import com.circle.Position;
-
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;

@@ -1,9 +1,6 @@
 package com.circle.intercept;
 
-import com.circle.constant.LoginState;
-import com.circle.util.SessionKey;
-import com.circle.util.json.JsonHelper;
-import com.circle.util.json.JsonReturn;
+import com.circle.utils.SessionKey;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
 import javax.servlet.http.HttpServletRequest;

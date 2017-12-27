@@ -3,10 +3,10 @@ package com.circle.service;
 import com.circle.constant.PageConstant;
 import com.circle.dao.DepartmentDAO;
 import com.circle.dao.PositionDAO;
-import com.circle.util.CompareUtil;
-import com.circle.util.date.DateTimeUtil;
-import com.circle.util.json.JsonReturn;
-import com.circle.util.pageutil.PageUtils;
+import com.circle.utils.CompareUtil;
+import com.circle.utils.json.JsonReturn;
+import com.circle.utils.pageutil.PageUtils;
+import com.circle.utils.time.ClockUtil;
 import com.circle.vo.DepartmentModel;
 import com.circle.vo.PositionModel;
 import org.apache.commons.lang3.StringUtils;
@@ -37,7 +37,7 @@ public class PositionServiceImpl extends BaseService<PositionModel> implements I
         if (CollectionUtils.isEmpty(pmList))
             return JsonReturn.buildFailure("未获取到数据!");
         for (PositionModel model : pmList) {
-            model.setTimestamp(new Timestamp(DateTimeUtil.getCurrentTime().getTime()));
+            model.setTimestamp(new Timestamp(ClockUtil.currentTimeMillis()));
         }
         return JsonReturn.buildSuccess(pmList);
     }
@@ -52,9 +52,9 @@ public class PositionServiceImpl extends BaseService<PositionModel> implements I
         model.setPoDepartment(String.valueOf(deptId));
         model.setPoName(name);
         model.setCreator(acctName);
-        model.setTimestamp(new Timestamp(DateTimeUtil.getCurrentTime().getTime()));
+        model.setTimestamp(new Timestamp(ClockUtil.currentTimeMillis()));
         model.setPoDescription(desc);
-        model.setCreateTime(new Timestamp(DateTimeUtil.getCurrentTime().getTime()));
+        model.setCreateTime(new Timestamp(ClockUtil.currentTimeMillis()));
         dao.create(model);
         return JsonReturn.buildSuccess("职位添加成功!");
     }

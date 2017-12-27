@@ -1,6 +1,6 @@
 package com.circle.service;
 
-import com.circle.util.json.JsonReturn;
+import com.circle.utils.json.JsonReturn;
 import com.circle.vo.ModuleModel;
 
 /**

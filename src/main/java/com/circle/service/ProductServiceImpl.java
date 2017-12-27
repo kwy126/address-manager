@@ -2,9 +2,9 @@ package com.circle.service;
 
 import com.circle.constant.PageConstant;
 import com.circle.dao.ProductDAO;
-import com.circle.util.date.DateTimeUtil;
-import com.circle.util.json.JsonReturn;
-import com.circle.util.pageutil.PageUtils;
+import com.circle.utils.json.JsonReturn;
+import com.circle.utils.pageutil.PageUtils;
+import com.circle.utils.time.ClockUtil;
 import com.circle.vo.ProductModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -34,9 +34,9 @@ public class ProductServiceImpl extends BaseService<ProductModel> implements IPr
         model.setNumber(Integer.valueOf(number));
         model.setDescription(description);
         model.setPrice(Double.valueOf(price));
-        model.setCreateTime(DateTimeUtil.getCurrentTime());
+        model.setCreateTime(ClockUtil.currentDate());
         model.setCreator(s);
-        model.setTimestamp(new Timestamp(DateTimeUtil.getCurrentTime().getTime()));
+        model.setTimestamp(new Timestamp(ClockUtil.currentTimeMillis()));
         dao.create(model);
         return JsonReturn.buildSuccess(model.getId());
     }
@@ -86,9 +86,9 @@ public class ProductServiceImpl extends BaseService<ProductModel> implements IPr
         model.setNumber(Integer.valueOf(number));
         model.setPrice(Double.valueOf(price));
         model.setDescription(description);
-        model.setUpdateTime(DateTimeUtil.getCurrentTime());
+        model.setUpdateTime(ClockUtil.currentDate());
         model.setUpdator(s);
-        model.setTimestamp(new Timestamp(DateTimeUtil.getCurrentTime().getTime()));
+        model.setTimestamp(new Timestamp(ClockUtil.currentTimeMillis()));
         dao.update(model);
         return JsonReturn.buildSuccess("修改成功！");
     }

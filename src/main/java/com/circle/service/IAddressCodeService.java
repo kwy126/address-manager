@@ -1,9 +1,10 @@
 package com.circle.service;
 
-import com.circle.util.json.JsonReturn;
+import com.circle.utils.json.JsonReturn;
 import com.circle.vo.AddressCodeModel;
 import com.circle.vo.AddressModel;
 
+import java.io.IOException;
 import java.util.List;
 
 
@@ -21,7 +22,7 @@ public interface IAddressCodeService extends IBaseService<AddressCodeModel> {
      */
     JsonReturn reorganize();
 
-    JsonReturn add(String address, String level);
+    JsonReturn add(String address, String level) throws IOException;
 
     String parse(AddressModel model) throws Exception;
 

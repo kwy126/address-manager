@@ -1,7 +1,7 @@
 package com.circle.service;
 
 import com.circle.dao.BaseDAO;
-import com.circle.util.LogUtil;
+import com.circle.utils.LogUtil;
 
 /**
  * Created by keweiyang on 2017/3/16.

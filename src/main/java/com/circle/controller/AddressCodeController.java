@@ -2,16 +2,12 @@ package com.circle.controller;
 
 
 import com.circle.service.IAddressCodeService;
-import com.circle.util.json.JsonReturn;
+import com.circle.utils.json.JsonReturn;
 import com.circle.vo.AddressCodeModel;
-import org.ansj.domain.Result;
-import org.ansj.domain.Term;
-import org.ansj.splitWord.analysis.DicAnalysis;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-import org.nlpcn.commons.lang.tire.library.Library;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,9 +17,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import java.io.*;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 
 @Controller
@@ -47,7 +41,7 @@ public class AddressCodeController extends AbstractController{
 
     @ResponseBody
     @RequestMapping(value = "add")
-    public JsonReturn add(@RequestParam  String address,@RequestParam String level) {
+    public JsonReturn add(@RequestParam  String address,@RequestParam String level) throws IOException {
         return service.add(address,level);
     }
 

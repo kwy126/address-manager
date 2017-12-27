@@ -3,9 +3,9 @@ package com.circle.service;
 import com.alibaba.druid.util.StringUtils;
 import com.circle.constant.PageConstant;
 import com.circle.dao.DepartmentDAO;
-import com.circle.util.date.DateTimeUtil;
-import com.circle.util.json.JsonReturn;
-import com.circle.util.pageutil.PageUtils;
+import com.circle.utils.json.JsonReturn;
+import com.circle.utils.pageutil.PageUtils;
+import com.circle.utils.time.ClockUtil;
 import com.circle.vo.DepartmentModel;
 import com.circle.vo.DepartmentState;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,7 +33,7 @@ public class DepartmentServiceImpl extends BaseService<DepartmentModel> implemen
             return JsonReturn.buildFailure("添加失败，部门名称不能为空！");
 
         }
-        DepartmentModel departmentModel = new DepartmentModel(name, new Timestamp(DateTimeUtil.getCurrentTime().getTime()),acctName, description, DepartmentState.normal.getState(),new Timestamp(DateTimeUtil.getCurrentTime().getTime()));
+        DepartmentModel departmentModel = new DepartmentModel(name, new Timestamp(ClockUtil.currentTimeMillis()),acctName, description, DepartmentState.normal.getState(),new Timestamp(ClockUtil.currentTimeMillis()));
         dao.create(departmentModel);
         info("\t新增部门信息成功：新增的信息为：{}", departmentModel.toString());
         return JsonReturn.buildSuccess("部门添加成功！");
