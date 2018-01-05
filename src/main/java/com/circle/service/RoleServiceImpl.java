@@ -5,9 +5,9 @@ import com.circle.constant.PageConstant;
 import com.circle.dao.ModuleDAO;
 import com.circle.dao.RoleDAO;
 import com.circle.dao.RoleModuleDAO;
-import com.circle.utils.CompareUtil;
 
 import com.circle.utils.json.JsonReturn;
+import com.circle.utils.object.ObjectUtil;
 import com.circle.utils.pageutil.PageUtils;
 import com.circle.utils.random.IdGenerator;
 import com.circle.utils.time.ClockUtil;
@@ -77,7 +77,7 @@ public class RoleServiceImpl extends BaseService<RoleModel> implements IRoleServ
             return JsonReturn.buildFailure("添加失败！");
         }
         RoleModel model = dao.findByName(name);
-        if (CompareUtil.isNotEmpty(model)) {
+        if (ObjectUtil.isEmpty(model)) {
             return JsonReturn.buildFailure("添加失败，角色名称重复");
         }
         model = new RoleModel();
@@ -94,17 +94,17 @@ public class RoleServiceImpl extends BaseService<RoleModel> implements IRoleServ
 
     public JsonReturn setRoleSecureValid(long role, String code, int type, boolean add) {
         ModuleModel moduleModel = moduleDAO.findByCode(code);
-        if (CompareUtil.isEmpty(moduleModel)) {
+        if (ObjectUtil.isEmpty(moduleModel)) {
             return JsonReturn.buildFailure("操作失败，模块不存在！");
         }
 
         RoleModel roleModel = dao.findById(role);
-        if (CompareUtil.isEmpty(roleModel)) {
+        if (ObjectUtil.isEmpty(roleModel)) {
             return JsonReturn.buildFailure("操作失败，角色不存在！");
         }
 
         RoleModuleModel roleModuleModel = roleModuleDAO.findByRoleLabelByModuleCode(roleModel.getRoleLabel(), moduleModel.getModuleCode());
-        if (CompareUtil.isEmpty(roleModuleModel)) {
+        if (ObjectUtil.isEmpty(roleModuleModel)) {
             roleModuleModel = new RoleModuleModel();
             roleModuleModel.setRoleLabel(roleModel.getRoleLabel());
             roleModuleModel.setModuleCode(code);

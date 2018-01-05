@@ -6,9 +6,9 @@ import com.circle.dao.AccountDAO;
 import com.circle.dao.AccountRoleDAO;
 import com.circle.dao.RoleDAO;
 import com.circle.dto.RoleDto;
-import com.circle.utils.CompareUtil;
 import com.circle.utils.SessionKey;
 import com.circle.utils.json.JsonReturn;
+import com.circle.utils.object.ObjectUtil;
 import com.circle.utils.pageutil.PageUtils;
 import com.circle.utils.time.ClockUtil;
 import com.circle.vo.AccountModel;
@@ -67,7 +67,7 @@ public class AccountServiceImpl extends BaseService<AccountModel> implements IAc
             return JsonReturn.buildFailure("添加失败！");
         }
         AccountModel model = dao.findByUserName(user);
-        if (CompareUtil.isNotEmpty(model)) {
+        if (ObjectUtil.isNotEmpty(model)) {
             return JsonReturn.buildFailure("添加失败，用户名重复");
         }
         model = new AccountModel();
@@ -100,7 +100,7 @@ public class AccountServiceImpl extends BaseService<AccountModel> implements IAc
 
     public JsonReturn findRole(String acctName) {
         List<RoleModel> roleModels = roleDAO.findAll();
-        if (CompareUtil.isEmpty(roleModels)) {
+        if (ObjectUtil.isEmpty(roleModels)) {
             return JsonReturn.buildFailure("未获取到角色信息！");
         }
         List<RoleDto> dtoList = new ArrayList<RoleDto>();
@@ -124,14 +124,14 @@ public class AccountServiceImpl extends BaseService<AccountModel> implements IAc
 
     public JsonReturn addAccountRole(long id, String account, boolean add, String s) {
         RoleModel roleModel = roleDAO.findById(id);
-        if (CompareUtil.isEmpty(roleModel)) {
+        if (ObjectUtil.isEmpty(roleModel)) {
             return JsonReturn.buildFailure("操作失败，数据源不存在");
         }
         if (!add) {
             accountRoleDAO.delByAcctNameAndRoleLabel(account, roleModel.getRoleLabel());
             return JsonReturn.buildSuccess("删除成功！");
         }
-        if (!CompareUtil.isNotEmpty(accountRoleDAO.findByAcctNameAndRoleLabel(account, roleModel.getRoleLabel()))) {
+        if (!ObjectUtil.isNotEmpty(accountRoleDAO.findByAcctNameAndRoleLabel(account, roleModel.getRoleLabel()))) {
             return JsonReturn.buildFailure("添加失败，重复添加！");
         }
         AccountRoleModel accountRoleModel = new AccountRoleModel();

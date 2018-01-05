@@ -271,7 +271,7 @@ public class AddressCodeServiceImpl extends BaseService<AddressCodeModel> implem
         }
 
         String returnValue = null;
-        if (model.getRequest_date().compareTo(DATE) < 0) {
+        if (StringUtils.isNotEmpty(model.getRequest_date()) && model.getRequest_date().compareTo(DATE) < 0) {
             type = 0;
         }
         //1. 精确匹配

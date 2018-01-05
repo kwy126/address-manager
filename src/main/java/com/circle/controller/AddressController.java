@@ -2,6 +2,7 @@ package com.circle.controller;
 
 
 import com.circle.service.IAddressService;
+import com.circle.utils.collection.ListUtil;
 import com.circle.utils.json.JsonReturn;
 import com.circle.vo.AddressModel;
 import jxl.common.Logger;
@@ -185,11 +186,32 @@ public class AddressController extends AbstractController {
 
             if (excelFile != null) {
                 List<AddressModel> addressModelList = AddressController.readExcel(excelFile.getInputStream(), state, type);
-                if (addressModelList != null && addressModelList.size() != 0) {
-                    for (AddressModel model : addressModelList) {
-                        model.setMonth(time.substring(0, 4) + "-" + time.substring(4, 6));
+                List<AddressModel> newCopyList = null;
+                if (ListUtil.isNotEmpty(addressModelList)) {
+                    if (addressModelList.size() / 20000 < 1) {
+                        for (int i=0;i<addressModelList.size();i++) {
+                            AddressModel model = addressModelList.get(i);
+                            model.setMonth(time.substring(0, 4) + "-" + time.substring(4, 6));
+                        }
+                        service.insertBatch(addressModelList);
+                    }else {
+                        newCopyList = new ArrayList<AddressModel>();
+                        for (int i=0;i<addressModelList.size();i++) {
+                            AddressModel model = addressModelList.get(i);
+                            model.setMonth(time.substring(0, 4) + "-" + time.substring(4, 6));
+                            newCopyList.add(model);
+                            if (i % 20000 == 0) {
+                                service.insertBatch(newCopyList);
+                                newCopyList = new ArrayList<AddressModel>();
+                            }
+                        }
+
+                        if (ListUtil.isNotEmpty(newCopyList)) {
+                            service.insertBatch(newCopyList);
+                        }
                     }
-                    return service.insertBatch(addressModelList);
+
+
                 }
             } else {
                 return JsonReturn.buildFailureWithEmptyBody();

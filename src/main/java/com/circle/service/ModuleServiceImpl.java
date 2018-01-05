@@ -6,8 +6,8 @@ import com.circle.dao.ModuleDAO;
 import com.circle.dao.RoleDAO;
 import com.circle.dao.RoleModuleDAO;
 import com.circle.dto.ModuleDto;
-import com.circle.utils.CompareUtil;
 import com.circle.utils.json.JsonReturn;
+import com.circle.utils.object.ObjectUtil;
 import com.circle.vo.AccountModel;
 import com.circle.vo.ModuleModel;
 import com.circle.vo.RoleModel;
@@ -58,7 +58,7 @@ public class ModuleServiceImpl extends BaseService<ModuleModel> implements IModu
     public JsonReturn findAllModuleByRoleId(long roleId) {
 
         RoleModel roleModel = roleDAO.findById(roleId);
-        if (CompareUtil.isEmpty(roleModel)) {
+        if (ObjectUtil.isEmpty(roleModel)) {
             return JsonReturn.buildFailure("未获取角色信息！");
         }
 
@@ -76,7 +76,7 @@ public class ModuleServiceImpl extends BaseService<ModuleModel> implements IModu
             dto.setUrl(mm.getModulePage());
             dto.setLevel(mm.getModuleLevel());
             RoleModuleModel roleModuleModel = roleModuleDAO.findByRoleLabelByModuleCode(roleModel.getRoleLabel(), mm.getModuleCode());
-            if (CompareUtil.isNotEmpty(roleModuleModel)) {
+            if (ObjectUtil.isNotEmpty(roleModuleModel)) {
                 dto.setAdd(roleModuleModel.getAdds() == 1);
                 dto.setDel(roleModuleModel.getDeletes() == 1);
                 dto.setModify(roleModuleModel.getModifys() == 1);
@@ -97,7 +97,7 @@ public class ModuleServiceImpl extends BaseService<ModuleModel> implements IModu
         }
         Map<String, Object> map = new HashMap<String, Object>();
         AccountModel accountModel = accountDAO.findByUserName(s);
-        if (CompareUtil.isEmpty(accountModel))
+        if (ObjectUtil.isEmpty(accountModel))
             return JsonReturn.buildFailure(map);
         map.put("account", accountModel.getAcctNickName());
         if ("0".equals(moduleCode)) {
@@ -109,7 +109,7 @@ public class ModuleServiceImpl extends BaseService<ModuleModel> implements IModu
             return JsonReturn.buildSuccess(map);
         }
         ModuleModel moduleModel = dao.findByCode(moduleCode);
-        if (CompareUtil.isEmpty(moduleModel))
+        if (ObjectUtil.isEmpty(moduleModel))
             return JsonReturn.buildFailure("非法操作!");
         map.put("moduleName", moduleModel.getModuleName());
         // 获取当前模块名与上级模块名, 前台做为面包绡显示
@@ -140,7 +140,7 @@ public class ModuleServiceImpl extends BaseService<ModuleModel> implements IModu
      */
     public Map<String, Object> findModuleName(Map<String, Object> map, String moduleCode, ModuleModel moduleModel) {
         moduleModel = dao.findByCode(moduleModel.getModuleSuperCode());
-        if (CompareUtil.isNotEmpty(moduleModel)) {
+        if (ObjectUtil.isNotEmpty(moduleModel)) {
             map.put("superModuleName", moduleModel.getModuleName());
             map.put("code", moduleModel.getModuleCode());
         }

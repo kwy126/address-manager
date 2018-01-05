@@ -25,6 +25,7 @@ public class URLResourceUtil {
 
     private static final String URL_PROTOCOL_FILE = "file";
 
+
     /**
      * 兼容无前缀, classpath://, file:// 的情况获取文件
      *
@@ -62,7 +63,7 @@ public class URLResourceUtil {
         }
     }
 
-    private static File getFileByURL(URL fileUrl) throws FileNotFoundException {
+    public static File getFileByURL(URL fileUrl) throws FileNotFoundException {
         Validate.notNull(fileUrl, "Resource URL must not be null");
         if (!URL_PROTOCOL_FILE.equals(fileUrl.getProtocol())) {
             throw new FileNotFoundException("URL cannot be resolved to absolute file path "

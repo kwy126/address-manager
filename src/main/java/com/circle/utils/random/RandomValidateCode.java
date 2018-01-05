@@ -1,4 +1,6 @@
-package com.circle.utils;
+package com.circle.utils.random;
+
+import com.circle.utils.SessionKey;
 
 import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletRequest;

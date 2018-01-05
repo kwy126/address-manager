@@ -3,8 +3,8 @@ package com.circle.service;
 import com.circle.constant.PageConstant;
 import com.circle.dao.DepartmentDAO;
 import com.circle.dao.PositionDAO;
-import com.circle.utils.CompareUtil;
 import com.circle.utils.json.JsonReturn;
+import com.circle.utils.object.ObjectUtil;
 import com.circle.utils.pageutil.PageUtils;
 import com.circle.utils.time.ClockUtil;
 import com.circle.vo.DepartmentModel;
@@ -46,7 +46,7 @@ public class PositionServiceImpl extends BaseService<PositionModel> implements I
         if (StringUtils.isEmpty(name))
             return JsonReturn.buildFailure("添加失败,名称为空!");
         DepartmentModel departmentModel = departmentDAO.findById(deptId);
-        if (CompareUtil.isEmpty(departmentModel))
+        if (ObjectUtil.isEmpty(departmentModel))
             return JsonReturn.buildFailure("添加失败, 部门不存在!");
         PositionModel model = new PositionModel();
         model.setPoDepartment(String.valueOf(deptId));
@@ -70,17 +70,17 @@ public class PositionServiceImpl extends BaseService<PositionModel> implements I
 
     public JsonReturn findPositionById(long id) {
         PositionModel position = dao.findByUuid(id);
-        if (CompareUtil.isEmpty(position))
+        if (ObjectUtil.isEmpty(position))
             return JsonReturn.buildFailure("源数据不存在!");
         return JsonReturn.buildSuccess(position);
     }
 
     public JsonReturn modifyPosition(long id, long deptId, String name, String desc, String acctName) {
         PositionModel position = dao.findByUuid(id);
-        if (CompareUtil.isEmpty(position))
+        if (ObjectUtil.isEmpty(position))
             return JsonReturn.buildFailure("源数据不存在!");
         DepartmentModel dept = departmentDAO.findById(deptId);
-        if (CompareUtil.isEmpty(dept))
+        if (ObjectUtil.isEmpty(dept))
             return JsonReturn.buildFailure("修改失败, 部门不存在!");
         position.setPoName(name);
         position.setPoDescription(desc);
