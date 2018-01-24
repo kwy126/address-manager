@@ -17,11 +17,21 @@ public class ObjectUtil {
     }
 
     public static boolean isEmpty(Object obj) {
-        if (obj == null) return true;
-        else if (obj instanceof CharSequence) return ((CharSequence) obj).length() == 0;
-        else if (obj instanceof Collection) return ((Collection) obj).isEmpty();
-        else if (obj instanceof Map) return ((Map) obj).isEmpty();
-        else if (obj.getClass().isArray()) return Array.getLength(obj) == 0;
+        if (obj == null) {
+            return true;
+        }
+        else if (obj instanceof CharSequence){
+            return ((CharSequence) obj).length() == 0;
+        }
+        else if (obj instanceof Collection) {
+            return ((Collection) obj).isEmpty();
+        }
+        else if (obj instanceof Map) {
+            return ((Map) obj).isEmpty();
+        }
+        else if (obj.getClass().isArray()) {
+            return Array.getLength(obj) == 0;
+        }
 
         return false;
     }

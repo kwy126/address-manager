@@ -97,7 +97,7 @@ public class AddressLngLatExchange {
                     String level = province.getString("level");
                     String name = province.getString("name");
                     //  System.out.println("level=" + level + " , name=" + name);
-                    if (level.equals("province")) {
+                    if ("province".equals(level)) {
                         System.out.println(name + "\t" + "province" + "\t" + "1");
                     }
                     //buildString(name,sb , level);
@@ -109,7 +109,7 @@ public class AddressLngLatExchange {
                         level = city.getString("level");
                         name = city.getString("name");
                         // System.out.println("level=" + level + " , name=" + name);
-                        if (level.equals("city")) {
+                        if ("city".equals(level)) {
                             System.out.println(name + "\t" + "city" + "\t" + "2");
                         }
                         //sb = new StringBuilder();
@@ -121,7 +121,7 @@ public class AddressLngLatExchange {
                             level = district.getString("level");
                             name = district.getString("name");
                             //System.out.println("level=" + level + " , name=" + name);
-                            if (level.equals("district")) {
+                            if ("district".equals(level)) {
                                 System.out.println(name + "\t" + "area" + "\t" + "3");
                             }
                             // sb = new StringBuilder();
@@ -165,19 +165,19 @@ public class AddressLngLatExchange {
     }
 
     private void buildString(String name, StringBuilder sb, String level) {
-        if (level.equals("province")) {
+        if ("province".equals(level)) {
             sb.append(name);
             sb.append("\t");
             sb.append("province");
             sb.append("\t");
             sb.append("1");
-        } else if (level.equals("city")) {
+        } else if ("city".equals(level)) {
             sb.append(name);
             sb.append("\t");
             sb.append("city");
             sb.append("\t");
             sb.append("2");
-        } else if (level.equals("district")) {
+        } else if ("district".equals(level)) {
             sb.append(name);
             sb.append("\t");
             sb.append("area");
@@ -218,7 +218,9 @@ public class AddressLngLatExchange {
             int count = Integer.valueOf(jsonObject.getString("count"));
             int pageNumber = count / 20;
             int remainder = count % 20;
-            if (remainder > 0) pageNumber = pageNumber + 1;
+            if (remainder > 0) {
+                pageNumber = pageNumber + 1;
+            }
             for (int i = 1; i <= pageNumber; i++) {
                 params.put("page", String.valueOf(i));
                 result = HttpUtil.URLGet(GET_LNG_PIO_URL, params, "UTF-8");

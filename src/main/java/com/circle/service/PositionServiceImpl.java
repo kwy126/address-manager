@@ -34,8 +34,10 @@ public class PositionServiceImpl extends BaseService<PositionModel> implements I
 
     public JsonReturn findPositionListInfo(int page, long deptId, String searchValue, String acctName) {
         List<PositionModel> pmList = dao.findPositionListInfo(deptId, searchValue, (page - 1) * PageConstant.DEFAULT_LINE, PageConstant.DEFAULT_LINE);
-        if (CollectionUtils.isEmpty(pmList))
+        if (CollectionUtils.isEmpty(pmList)){
             return JsonReturn.buildFailure("未获取到数据!");
+        }
+
         for (PositionModel model : pmList) {
             model.setTimestamp(new Timestamp(ClockUtil.currentTimeMillis()));
         }
@@ -43,11 +45,15 @@ public class PositionServiceImpl extends BaseService<PositionModel> implements I
     }
 
     public JsonReturn addPosition(long deptId, String name, String desc, String acctName) {
-        if (StringUtils.isEmpty(name))
+        if (StringUtils.isEmpty(name)){
             return JsonReturn.buildFailure("添加失败,名称为空!");
+        }
+
         DepartmentModel departmentModel = departmentDAO.findById(deptId);
-        if (ObjectUtil.isEmpty(departmentModel))
+        if (ObjectUtil.isEmpty(departmentModel)){
             return JsonReturn.buildFailure("添加失败, 部门不存在!");
+        }
+
         PositionModel model = new PositionModel();
         model.setPoDepartment(String.valueOf(deptId));
         model.setPoName(name);
@@ -77,11 +83,15 @@ public class PositionServiceImpl extends BaseService<PositionModel> implements I
 
     public JsonReturn modifyPosition(long id, long deptId, String name, String desc, String acctName) {
         PositionModel position = dao.findByUuid(id);
-        if (ObjectUtil.isEmpty(position))
+        if (ObjectUtil.isEmpty(position)){
             return JsonReturn.buildFailure("源数据不存在!");
+        }
+
         DepartmentModel dept = departmentDAO.findById(deptId);
-        if (ObjectUtil.isEmpty(dept))
+        if (ObjectUtil.isEmpty(dept)){
             return JsonReturn.buildFailure("修改失败, 部门不存在!");
+        }
+
         position.setPoName(name);
         position.setPoDescription(desc);
         position.setPoDepartment(String.valueOf(deptId));
@@ -91,8 +101,10 @@ public class PositionServiceImpl extends BaseService<PositionModel> implements I
 
     public JsonReturn findPositionByDeptId(long deptId) {
         List<PositionModel> list = dao.findByDeptId(deptId);
-        if (CollectionUtils.isEmpty(list))
+        if (CollectionUtils.isEmpty(list)){
             return JsonReturn.buildFailure("该部门下不存在职位!");
+        }
+
         return JsonReturn.buildSuccess(list);
     }
 }

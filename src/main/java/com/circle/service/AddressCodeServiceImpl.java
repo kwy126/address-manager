@@ -122,7 +122,7 @@ public class AddressCodeServiceImpl extends BaseService<AddressCodeModel> implem
                 AddressCodeModel addressCodeModel = sameModels.get(0);
                 AddressCodeModel newModel = null;
 
-                if (addressCodeModel.getLevel().equals("4")) {
+                if ("4".equals(addressCodeModel.getLevel())) {
                     String name = addressCodeModel.getName();
                     if (name.endsWith("街道")) {
                         List<AddressCodeModel> lists = new ArrayList<AddressCodeModel>();
@@ -172,7 +172,7 @@ public class AddressCodeServiceImpl extends BaseService<AddressCodeModel> implem
             String str = HttpUtil.URLGet("http://ditu.amap.com/service/regeo", params, Charsets.UTF_8_NAME);
             JSONObject obj = JSONObject.parseObject(str);
             String value = (String) obj.get("status");
-            if (value.equals("1")) {
+            if ("1".equals(value)) {
                 String dataValue = obj.get("data").toString();
                 JSONObject dataObject = JSONObject.parseObject(dataValue);
                 String desc = dataObject.get("desc").toString();
@@ -182,22 +182,22 @@ public class AddressCodeServiceImpl extends BaseService<AddressCodeModel> implem
             sb.append("\t");
             sb.append(level);
             sb.append("\t");
-            if (level.equals("province")) {
+            if ("province".equals(level)) {
                 model.setLevel(1 + "");
                 sb.append("1");
-            } else if (level.equals("city")) {
+            } else if ("city".equals(level)) {
                 model.setLevel(2 + "");
                 sb.append("2");
-            } else if (level.equals("area")) {
+            } else if ("area".equals(level)) {
                 model.setLevel(3 + "");
                 sb.append("3");
-            } else if (level.equals("town")) {
+            } else if ("town".equals(level)) {
                 model.setLevel(4 + "");
                 sb.append("4");
-            } else if (level.equals("vil")) {
+            } else if ("vil".equals(level)) {
                 model.setLevel(5 + "");
                 sb.append("5");
-            } else if (level.equals("road")) {
+            } else if ("road".equals(level)) {
                 model.setLevel(6 + "");
                 sb.append("6");
             } else {
@@ -259,6 +259,7 @@ public class AddressCodeServiceImpl extends BaseService<AddressCodeModel> implem
     }
 
     /**
+     * 对某个对象进行解析
      * @param model
      * @return
      */
@@ -266,7 +267,7 @@ public class AddressCodeServiceImpl extends BaseService<AddressCodeModel> implem
         int type = 1;
         StringBuffer stringBuffer = new StringBuffer();
         String address = model.getRequester_address();
-        if (address == null || address.equals("")) {
+        if (StringUtils.isEmpty(address)) {
             return "选中记录地址为空！";
         }
 
@@ -313,7 +314,7 @@ public class AddressCodeServiceImpl extends BaseService<AddressCodeModel> implem
             model.setRemark(stringBuffer.toString());
 
             // 3. 处理非宁波区域的地址
-            if ((province != null && !province.equals("浙江省")) && (province != null && !province.equals("浙江"))) {
+            if ((province != null && !"浙江省".equals(province)) && (province != null && !"浙江".equals(province))) {
                 model.setRegion("其他");
                 model.setCreateTime(new Date());
                 model.setState(1);
@@ -321,7 +322,7 @@ public class AddressCodeServiceImpl extends BaseService<AddressCodeModel> implem
                 addressDAO.update(model);
                 return "解析成功";
             }
-            if ((city != null && !city.equals("宁波市")) && (city != null && !city.equals("宁波"))) {
+            if ((city != null && !"宁波市".equals(city)) && (city != null && !"宁波".equals(city))) {
                 model.setRegion("其他");
                 model.setCreateTime(new Date());
                 model.setState(1);
@@ -342,7 +343,7 @@ public class AddressCodeServiceImpl extends BaseService<AddressCodeModel> implem
                         model.setRegion(area);
 
                         String townVal = this.judgeEqual("4", type, map, model);
-                        if (townVal.equals("0")) {
+                        if ("0".equals(townVal)) {
                             updateFunctionCode(model, map);
                             return "解析成功！";
                         } else {
@@ -451,28 +452,28 @@ public class AddressCodeServiceImpl extends BaseService<AddressCodeModel> implem
                 }
             } else if (StringUtils.isNotEmpty(area)) {
 
-                if (area.equals("奉化市") || area.equals("奉化")) {
+                if ("奉化市".equals(area) || "奉化".equals(area)) {
                     area = "奉化区";
-                } else if (area.equals("高新区") || area.equals("东钱湖旅游度假区") || area.equals("鄞州")) {
+                } else if ("高新区".equals(area) || "东钱湖旅游度假区".equals(area) || "鄞州".equals(area)) {
                     area = "鄞州区";
-                } else if (area.equals("保税区") || area.equals("大榭开发区") || area.equals("北仑")) {
+                } else if ("保税区".equals(area) || "大榭开发区".equals(area) || "北仑".equals(area)) {
                     area = "北仑区";
-                } else if (area.equals("杭州湾新区") || area.equals("慈溪")) {
+                } else if ("杭州湾新区".equals(area) || "慈溪".equals(area)) {
                     area = "慈溪市";
-                } else if (area.equals("江东区") || area.equals("江东")) {
+                } else if ("江东区".equals(area) || "江东".equals(area)) {
                     area = "鄞州区";
-                } else if (area.equals("象山")) {
+                } else if ("象山".equals(area)) {
                     area = "象山县";
-                } else if (area.equals("海曙")) {
+                } else if ("海曙".equals(area)) {
                     area = "海曙区";
-                } else if (area.equals("江北")) {
+                } else if ("江北".equals(area)) {
                     area = "江北区";
-                } else if (area.equals("镇海")) {
+                } else if ("镇海".equals(area)) {
                     area = "镇海区";
-                } else if (area.equals("余姚")) {
+                } else if ("余姚".equals(area)) {
                     area = "余姚市";
 
-                } else if (area.equals("宁海")) {
+                } else if ("宁海".equals(area)) {
                     area = "宁海县";
                 }
                 model.setRegion(area);
@@ -488,19 +489,19 @@ public class AddressCodeServiceImpl extends BaseService<AddressCodeModel> implem
 
                 if (StringUtils.isNotEmpty(town)) {
                     String townVal = this.judgeEqual("4", type, map, model);
-                    if (townVal.equals("0")) {
+                    if ("0".equals(townVal)) {
                         updateFunctionCode(model, map);
                         return "解析成功！";
                     } else {
                         if (vil != null && vil != "" && vil.length() > 0) {
                             String vilValue = this.judgeEqual("5", type, map, model);
-                            if (vilValue.equals("0")) {
+                            if ("0".equals(vilValue)) {
                                 updateFunctionCode(model, map);
                                 return "解析成功！";
                             } else {
                                 if (road != null && road != "" && road.length() > 0) {
                                     String value = this.judgeEqual("6", type, map, model);
-                                    if (value.equals("0")) {
+                                    if ("0".equals(value)) {
                                         updateFunctionCode(model, map);
                                         return "解析成功！";
                                     } else {
@@ -516,7 +517,7 @@ public class AddressCodeServiceImpl extends BaseService<AddressCodeModel> implem
                             }
                         } else if (town == null && vil == null && road != null && road != "" && road.length() > 0) {
                             String value = this.judgeEqual("6", type, map, model);
-                            if (value.equals("0")) {
+                            if ("0".equals(value)) {
                                 updateFunctionCode(model, map);
                                 return "解析成功！";
                             } else {
@@ -531,13 +532,13 @@ public class AddressCodeServiceImpl extends BaseService<AddressCodeModel> implem
                     }
                 } else if (town == null && vil != null && vil != "" && vil.length() > 0) {
                     String vilValue = this.judgeEqual("5", type, map, model);
-                    if (vilValue.equals("0")) {
+                    if ("0".equals(vilValue)) {
                         updateFunctionCode(model, map);
                         return "解析成功！";
                     } else {
                         if (road != null && road != "" && road.length() > 0) {
                             String value = this.judgeEqual("6", type, map, model);
-                            if (value.equals("0")) {
+                            if ("0".equals(value)) {
                                 updateFunctionCode(model, map);
                                 return "解析成功！";
                             } else {
@@ -552,7 +553,7 @@ public class AddressCodeServiceImpl extends BaseService<AddressCodeModel> implem
                     }
                 } else if (town == null && vil == null && road != null && road != "" && road.length() > 0) {
                     String value = this.judgeEqual("6", type, map, model);
-                    if (value.equals("0")) {
+                    if ("0".equals(value)) {
                         updateFunctionCode(model, map);
                         return "解析成功！";
                     } else {
@@ -648,7 +649,7 @@ public class AddressCodeServiceImpl extends BaseService<AddressCodeModel> implem
                 String str = HttpUtil.URLGet("http://ditu.amap.com/service/regeo", params, "UTF-8");
                 JSONObject obj = JSONObject.parseObject(str);
                 String value = (String) obj.get("status");
-                if (value.equals("1")) {
+                if ("1".equals(value)) {
                     String dataValue = obj.get("data").toString();
                     JSONObject dataObject = JSONObject.parseObject(dataValue);
                     String desc = dataObject.get("desc").toString();
@@ -671,16 +672,16 @@ public class AddressCodeServiceImpl extends BaseService<AddressCodeModel> implem
         String retVal = "1";
 
         if (level != null) {
-            if (level.equals("6")) {
+            if ("6".equals(level)) {
                 name = map.get("road");
-            } else if (level.equals("5")) {
+            } else if ("5".equals(level)) {
                 name = map.get("vil");
-            } else if (level.equals("4")) {
+            } else if ("4".equals(level)) {
                 name = map.get("town");
             }
         }
 
-        if (area.equals("鄞州区")) {
+        if ("鄞州区".equals(area)) {
             List<AddressCodeModel> addressCodeModelList = dao.findByAreaAndNameAndLevel(name, area, level);
             if (ListUtil.isEmpty(addressCodeModelList)) {
                 addressCodeModelList = dao.findByAreaAndNameAndLevel(name, "海曙区", level);

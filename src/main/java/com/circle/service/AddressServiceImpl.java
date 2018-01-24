@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -183,7 +184,7 @@ public class AddressServiceImpl extends BaseService<AddressModel> implements IAd
 
     public JsonReturn getDataPrecision(int type,Integer functionOrRegion,String time) {
 
-        if (time.equals("")) {
+        if (StringUtils.isEmpty(time)) {
             SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM");
              time=sdf.format(new java.util.Date());
         }

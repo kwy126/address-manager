@@ -4,6 +4,7 @@ package com.circle.controller;
 import com.circle.service.IAddressCodeService;
 import com.circle.utils.json.JsonReturn;
 import com.circle.vo.AddressCodeModel;
+import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -90,7 +91,7 @@ public class AddressCodeController extends AbstractController{
 
         for (int i = 0; i < lists.size(); i++) {
             AddressCodeModel model = lists.get(i);
-            if (model.getUrl() != null && !model.getUrl().equals("") && !model.getUrl().equals("http://www.stats.gov.cn/tjsj/tjbz/tjyqhdmhcxhfdm/2015/33/3302.html")) {
+            if (StringUtils.isNotEmpty(model.getUrl())  && !"http://www.stats.gov.cn/tjsj/tjbz/tjyqhdmhcxhfdm/2015/33/3302.html".equals(model.getUrl())) {
                 List<AddressCodeModel> childrens = this.getProvince(name, model.getUrl(), "town", model.getRegion_code());
                 if (childrens.size() > 0) {
                     service.insertBatch(childrens);
@@ -98,7 +99,7 @@ public class AddressCodeController extends AbstractController{
 
                 for (int j = 0; j < childrens.size(); j++) {
                     AddressCodeModel childModel = childrens.get(j);
-                    if (childModel.getUrl() != null && !childModel.getUrl().equals("")) {
+                    if (StringUtils.isNotEmpty(childModel.getUrl())) {
                         List<AddressCodeModel> grandsons = this.getProvince(name, childModel.getUrl(), "village", childModel.getRegion_code());
                         if (grandsons.size() > 0) {
                             service.insertBatch(grandsons);

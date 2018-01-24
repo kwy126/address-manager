@@ -1,6 +1,7 @@
 package com.circle.controller;
 
 
+import com.circle.constant.PatentType;
 import com.circle.service.IAddressService;
 import com.circle.utils.collection.ListUtil;
 import com.circle.utils.json.JsonReturn;
@@ -25,11 +26,20 @@ import java.util.*;
 
 @Controller
 @RequestMapping(value = "address")
+/**
+ * @author keweiyang
+ */
 public class AddressController extends AbstractController {
+
     private static final Logger logger = Logger.getLogger(AddressController.class);
 
+    /**
+     * 批量上传文件分割值
+     */
+    private static final int UPLOAD_FILE_SIZE = 10000;
+
     @Autowired
-    private IAddressService service;
+    private IAddressService service = null;
 
     @ResponseBody
     @RequestMapping(value = "findAddressList")
@@ -89,11 +99,11 @@ public class AddressController extends AbstractController {
     @ResponseBody
     public JsonReturn exportExcel(int type, String time) {
         String title = time;
-        if (type == 0) {
+        if (type == PatentType.Apply.getType()) {
             title = time+"-申请专利数据";
-        } else if (type == 1) {
+        } else if (type == PatentType.Authorize.getType()) {
             title = time + "-授权专利数据";
-        } else if (type == 2) {
+        } else if (type == PatentType.Effection.getType()) {
             title = time + "-有效专利数据";
         }
         StringBuffer sb = new StringBuffer();
@@ -162,8 +172,8 @@ public class AddressController extends AbstractController {
             }
         }
 
-    }
 
+    }
 
     @RequestMapping(value = "importExcel", method = RequestMethod.POST)
     @ResponseBody
@@ -188,7 +198,7 @@ public class AddressController extends AbstractController {
                 List<AddressModel> addressModelList = AddressController.readExcel(excelFile.getInputStream(), state, type);
                 List<AddressModel> newCopyList = null;
                 if (ListUtil.isNotEmpty(addressModelList)) {
-                    if (addressModelList.size() / 20000 < 1) {
+                    if (addressModelList.size() / UPLOAD_FILE_SIZE < 1) {
                         for (int i=0;i<addressModelList.size();i++) {
                             AddressModel model = addressModelList.get(i);
                             model.setMonth(time.substring(0, 4) + "-" + time.substring(4, 6));
@@ -200,7 +210,7 @@ public class AddressController extends AbstractController {
                             AddressModel model = addressModelList.get(i);
                             model.setMonth(time.substring(0, 4) + "-" + time.substring(4, 6));
                             newCopyList.add(model);
-                            if (i % 20000 == 0) {
+                            if (i % 10000 == 0) {
                                 service.insertBatch(newCopyList);
                                 newCopyList = new ArrayList<AddressModel>();
                             }
@@ -253,46 +263,49 @@ public class AddressController extends AbstractController {
                     continue;
                 }
                 String titleName = xc.getStringCellValue();
-                if (titleName.equals("申请号")) {
-                    c.setCellType(Cell.CELL_TYPE_STRING);//将申请号有的是数字，有的是字母，统一设置为字符串
+                //将申请号有的是数字，有的是字母，统一设置为字符串
+                if ("申请号".equals(titleName)) {
+                    c.setCellType(Cell.CELL_TYPE_STRING);
                     model.setRequest_number(c.getStringCellValue());
-                } else if (titleName.equals("授权入库日") || titleName.equals("案卷入库日")) {
+                } else if ("授权入库日".equals(titleName) || "案卷入库日".equals(titleName)) {
                     c.setCellType(Cell.CELL_TYPE_STRING);
                     model.setFile_entry_date(c.getStringCellValue());
 
-                } else if (titleName.equals("申请日")) {
+                } else if ("申请日".equals(titleName)) {
                     c.setCellType(Cell.CELL_TYPE_STRING);
                     model.setRequest_date(c.getStringCellValue());
 
-                } else if (titleName.equals("专利权人邮编") || titleName.equals("申请人邮编")) {
+                } else if ("专利权人邮编".equals(titleName) || "申请人邮编".equals(titleName)) {
                     c.setCellType(Cell.CELL_TYPE_STRING);
                     model.setRequester_postcode(c.getStringCellValue());
-                } else if (titleName.equals("专利权人地址") || titleName.equals("申请人地址")) {
+                } else if ("专利权人地址".equals(titleName) || "申请人地址".equals(titleName)) {
                     model.setRequester_address(c.getStringCellValue());
-                } else if (titleName.equals("专利类型")) {
+                } else if ("专利类型".equals(titleName)) {
                     model.setPatent_type(c.getStringCellValue());
 
-                } else if (titleName.equals("专利权人类型") || titleName.equals("申请人类型")) {
+                } else if ("专利权人类型".equals(titleName) || "申请人类型".equals(titleName)) {
                     model.setRequester_type(c.getStringCellValue());
 
-                } else if (titleName.equals("省份名称")) {
+                } else if ("省份名称".equals(titleName)) {
                     model.setProvince(c.getStringCellValue());
 
-                } else if (titleName.equals("城市名称")) {
+                } else if ("城市名称".equals(titleName)) {
                     model.setCity(c.getStringCellValue());
 
-                } else if (titleName.equals("申请方式名称")) {
+                } else if ("申请方式名称".equals(titleName)) {
                     model.setChannel(c.getStringCellValue());
-                } else if (titleName.equals("地区") || titleName.equals("地址化区")) {
+                } else if ("地区".equals(titleName) || "地址化区".equals(titleName)) {
+                    model.setRegion(c.getStringCellValue());
+
+                } else if ("四区一岛".equals(titleName)) {
+                    model.setFunction_region(c.getStringCellValue());
+                }else if("已标记地址化区".equals(titleName)){
                     model.setRegion_marked(c.getStringCellValue());
-
-                } else if (titleName.equals("四区一岛")) {
+                } else if ("已标记四区一岛".equals(titleName)) {
                     model.setFunction_region_marked(c.getStringCellValue());
-
                 } else {
 
                 }
-                //model.setRemark(state);
                 model.setType(type);
                 model.setState(Integer.valueOf(state));
 
