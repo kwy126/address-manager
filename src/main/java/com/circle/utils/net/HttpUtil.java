@@ -70,7 +70,8 @@ public class HttpUtil {
             //执行postMethod
             int statusCode = client.executeMethod(postMethod);
             if (statusCode == HttpStatus.SC_OK) {
-                response = postMethod.getResponseBodyAsString();
+                // 设置返回值的读取编码
+                response = new String(postMethod.getResponseBody(),"UTF-8");
             } else {
                 logger.error("响应状态码 = " + postMethod.getStatusCode());
             }

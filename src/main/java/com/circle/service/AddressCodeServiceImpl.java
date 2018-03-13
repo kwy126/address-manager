@@ -1,6 +1,7 @@
 package com.circle.service;
 
 import com.alibaba.fastjson.JSONObject;
+import com.circle.constant.PostCode;
 import com.circle.dao.AddressCodeDAO;
 import com.circle.dao.AddressDAO;
 import com.circle.dao.FunctionCodeDAO;
@@ -287,6 +288,7 @@ public class AddressCodeServiceImpl extends BaseService<AddressCodeModel> implem
             String area = map.get("area");
             String province = map.get("province");
             String city = map.get("city");
+            String postArea = "";
             if (province != null && province.length() > 0) {
                 stringBuffer.append(province);
                 stringBuffer.append(",");
@@ -330,127 +332,132 @@ public class AddressCodeServiceImpl extends BaseService<AddressCodeModel> implem
                 return "解析成功";
             }
 
+            // 根据邮编获取行政区域
+            if (StringUtils.isNotEmpty(model.getRequester_postcode())&& model.getRequester_postcode().length()>3 ) {
+                int postNumber = Integer.valueOf(model.getRequester_postcode().substring(0, 4));
+
+                if (postNumber== PostCode.BeiLun.getPostCode()) {
+                    postArea = "北仑区";
+                }else if (postNumber == PostCode.FengHua.getPostCode()) {
+                    postArea = "奉化区";
+                }else if (postNumber == PostCode.XianShan.getPostCode()) {
+                    postArea = "象山县";
+                }else if (postNumber == PostCode.CiXi.getPostCode()) {
+                    postArea = "慈溪市";
+                }else if (postNumber == PostCode.YuYao.getPostCode()) {
+                    postArea = "余姚市";
+                } else if (postNumber == PostCode.ZhenHai.getPostCode()) {
+                    postArea = "镇海区";
+                } else if (postNumber == PostCode.NingHai.getPostCode()) {
+                    postArea = "宁海县";
+                } else if (postNumber == PostCode.YinZhou.getPostCode()) {
+                    postArea = "鄞州区";
+                } else if (postNumber == PostCode.HaiShu.getPostCode()) {
+                    if (Integer.valueOf(model.getRequester_postcode()) == 315035 || Integer.valueOf(model.getRequester_postcode()) == 315016 || Integer.valueOf(model.getRequester_postcode()) == 315029 || Integer.valueOf(model.getRequester_postcode()) == 315032
+                            || Integer.valueOf(model.getRequester_postcode()) == 315021 || Integer.valueOf(model.getRequester_postcode()) == 315031 || Integer.valueOf(model.getRequester_postcode()) == 315034
+                            || Integer.valueOf(model.getRequester_postcode()) == 315038 || Integer.valueOf(model.getRequester_postcode()) == 315020 || Integer.valueOf(model.getRequester_postcode()) == 315033
+                            || Integer.valueOf(model.getRequester_postcode()) == 315036 || Integer.valueOf(model.getRequester_postcode()) == 315037) {
+                        postArea = "江北区";
+                    } else {
+                        postArea = "海曙区";
+                    }
+
+                }
+
+//                area = postArea;
+
+
+            }
+
             // 4. 区为空
-            if (area == null) {
+            if (area == null && StringUtils.isNotEmpty(postArea)) {
                 //假如area为null，则先确定area
                 if (town != null && town != "" && town.length() > 0) {
-
-                    List<AddressCodeModel> townAreas = dao.findByAreaAndNameAndLevel(town, "", "4");
-                    if (townAreas != null && townAreas.size() >= 1) {
-                        area = townAreas.get(0).getDescription().split(",")[2];
+                    if (town.contains("集士港") ||town.contains("集仕港")|| town.contains("古林") || town.contains("高桥") || town.contains("横街") || town.contains("鄞江") || town.contains("洞桥") || town.contains("章水") || town.contains("龙观") || town.contains("石碶")|| town.contains("望春")) {
+                        model.setRegion("海曙区");
+                        map.put("area", "海曙区");
+                        updateFunctionCode(model, map);
+                        return "解析成功！";
                     }
-                    if (StringUtils.isNotEmpty(area)) {
+
+                    List<AddressCodeModel> townAreas = dao.findByAreaAndNameAndLevel(town, postArea, "4");
+                    if (townAreas != null && townAreas.size() > 0) {
+                        area = postArea;
                         model.setRegion(area);
-
-                        String townVal = this.judgeEqual("4", type, map, model);
-                        if ("0".equals(townVal)) {
-                            updateFunctionCode(model, map);
-                            return "解析成功！";
-                        } else {
+                        updateFunctionCode(model, map);
+                        return "解析成功!";
+                    } else {
                             if (vil != null && vil != "" && vil.length() > 0) {
-                                List<AddressCodeModel> requestAreas = dao.findByAreaAndNameAndLevel(vil, "", "5");
-                                if (requestAreas != null && requestAreas.size() == 1) {
+                                List<AddressCodeModel> requestAreas = dao.findByAreaAndNameAndLevel(vil, postArea, "5");
+                                if (requestAreas != null && requestAreas.size() >0) {
 
-                                    area = requestAreas.get(0).getDescription().split(",")[2];
-                                }
-                                String vilValue = this.judgeEqual("5", type, map, model);
-                                if (vilValue.equals("0")) {
+                                    area = postArea;
+                                    model.setRegion(area);
                                     updateFunctionCode(model, map);
-                                    return "解析成功！";
-                                } else {
-                                    if (StringUtils.isNotEmpty(road)) {
-                                        List<AddressCodeModel> roadAreas = dao.findByAreaAndNameAndLevel(road, "", "6");
-                                        if (roadAreas != null && roadAreas.size() == 1) {
-
-                                            area = roadAreas.get(0).getDescription().split(",")[2];
-                                        }
-                                        String value = this.judgeEqual("6", type, map, model);
-                                        if (value.equals("0")) {
+                                    return "解析成功!";
+                                }else {
+                                    if (road != null && road != "" && road.length() > 0) {
+                                        List<AddressCodeModel> roadAreas = dao.findByAreaAndNameAndLevel(road, postArea, "6");
+                                        if (roadAreas != null && roadAreas.size() > 0) {
+                                            area = postArea;
+                                            model.setRegion(area);
                                             updateFunctionCode(model, map);
-                                            return "解析成功！";
+                                            return "解析成功!";
                                         } else {
-                                            return "解析失败！";
+                                            this.invokeAPI(model, map);
+                                            return "解析成功!";
                                         }
-                                    } else {
+                                    }else{
                                         this.invokeAPI(model, map);
                                         return "解析成功!";
                                     }
                                 }
-                            }
-                        }
-                    } else {
-                        this.invokeAPI(model, map);
-                        return "解析成功!";
-                    }
-
-
-                } else if (town == null && vil != null && vil != "" && vil.length() > 0) {
-                    List<AddressCodeModel> requestAreas = dao.findByAreaAndNameAndLevel(vil, "", "4");
-                    if (requestAreas != null && requestAreas.size() == 1) {
-
-                        area = requestAreas.get(0).getDescription().split(",")[2];
-                    }
-
-                    if (area != null && area.length() > 0) {
-                        model.setRegion(area);
-                        String vilValue = this.judgeEqual("5", type, map, model);
-                        if (vilValue.equals("0")) {
-                            updateFunctionCode(model, map);
-                            return "解析成功！";
-                        } else {
-                            if (road != null && road != "" && road.length() > 0) {
-                                List<AddressCodeModel> roadAreas = dao.findByAreaAndNameAndLevel(road, "", "6");
-                                if (roadAreas != null && roadAreas.size() == 1) {
-
-                                    area = roadAreas.get(0).getDescription().split(",")[2];
-                                }
-                                String value = this.judgeEqual("6", type, map, model);
-                                if (value.equals("0")) {
-                                    updateFunctionCode(model, map);
-                                    return "解析成功！";
-                                } else {
-                                    // return "解析失败！";
-                                    this.invokeAPI(model, map);
-                                    return "解析成功!";
-                                }
-                            } else {
+                            }else{
                                 this.invokeAPI(model, map);
                                 return "解析成功!";
                             }
                         }
-                    } else {
-                        this.invokeAPI(model, map);
-                        return "解析成功!";
-                    }
-
-
-                } else if (town == null && vil == null && road != null && road != "" && road.length() > 0) {
-                    List<AddressCodeModel> roadAreas = dao.findByAreaAndNameAndLevel(road, "", "4");
-                    if (roadAreas != null && roadAreas.size() == 1) {
-
-                        area = roadAreas.get(0).getDescription().split(",")[2];
-                    }
-                    if (area != null && area.length() > 0) {
-                        model.setRegion(area);
-                        String value = this.judgeEqual("6", type, map, model);
-                        if (value.equals("0")) {
+                    } else if (town == null && vil != null && vil != "" && vil.length() > 0) {
+                        List<AddressCodeModel> requestAreas = dao.findByAreaAndNameAndLevel(vil, postArea, "5");
+                        if (requestAreas != null && requestAreas.size() >0) {
+                            area = postArea;
+                            model.setRegion(area);
                             updateFunctionCode(model, map);
-                            return "解析成功！";
-                        } else {
-                            this.invokeAPI(model, map);
                             return "解析成功!";
-                            // return "解析失败！";
-                        }
+                        }else{
+                            if (road != null && road != "" && road.length() > 0) {
+                                List<AddressCodeModel> roadAreas = dao.findByAreaAndNameAndLevel(road, postArea, "6");
+                                if (roadAreas != null && roadAreas.size()>0) {
+                                    area = postArea;
+                                    model.setRegion(area);
+                                    updateFunctionCode(model, map);
+                                    return "解析成功!";
+                                }else {
+                                    // return "解析失败！";
+                                    this.invokeAPI(model, map);
+                                    return "解析成功!";
+                                }
+                            }else{
+                                this.invokeAPI(model, map);
+                                return "解析成功!";
+                            }
+                    }
+                } else if (town == null && vil == null && road != null && road != "" && road.length() > 0) {
+                    List<AddressCodeModel> roadAreas = dao.findByAreaAndNameAndLevel(road, postArea, "6");
+                    if (roadAreas != null && roadAreas.size() > 0) {
+                        area = postArea;
+                        model.setRegion(area);
+                        updateFunctionCode(model, map);
+                        return "解析成功!";
                     } else {
                         this.invokeAPI(model, map);
                         return "解析成功!";
                     }
-
-                } else {
+                }else{
                     this.invokeAPI(model, map);
                     return "解析成功!";
                 }
-            } else if (StringUtils.isNotEmpty(area)) {
+            } else if (StringUtils.isNotEmpty(area) ) {
 
                 if ("奉化市".equals(area) || "奉化".equals(area)) {
                     area = "奉化区";
@@ -476,7 +483,6 @@ public class AddressCodeServiceImpl extends BaseService<AddressCodeModel> implem
                 } else if ("宁海".equals(area)) {
                     area = "宁海县";
                 }
-                model.setRegion(area);
 
                 List<AddressCodeModel> models = dao.findByAreaAndNameAndLevel(area, "", "3");
                 if (ListUtil.isEmpty(models)) {
@@ -487,84 +493,238 @@ public class AddressCodeServiceImpl extends BaseService<AddressCodeModel> implem
                     return "解析成功";
                 }
 
+                if (StringUtils.isNotEmpty(postArea) && area.equals(postArea) && !"鄞州区".equals(postArea)&& !"海曙区".equals(postArea)&& !"镇海区".equals(postArea)) {
+                    model.setRegion(area);
+                    updateFunctionCode(model, map);
+                    return "解析成功！";
+                }
+
+                /**
+                 * 处理邮编和地址化区相等，且都是错误的情况
+                 * 比如说，浙江省宁波市鄞州区石碶街道黄隘村16组44号
+                 */
                 if (StringUtils.isNotEmpty(town)) {
-                    String townVal = this.judgeEqual("4", type, map, model);
-                    if ("0".equals(townVal)) {
+                    if (town.contains("集士港") || town.contains("集仕港") || town.contains("古林") || town.contains("高桥") || town.contains("横街") || town.contains("鄞江") || town.contains("洞桥") || town.contains("章水") || town.contains("龙观") || town.contains("石碶") || town.contains("望春")) {
+                        model.setRegion("海曙区");
+                        map.put("area", "海曙区");
                         updateFunctionCode(model, map);
                         return "解析成功！";
-                    } else {
-                        if (vil != null && vil != "" && vil.length() > 0) {
-                            String vilValue = this.judgeEqual("5", type, map, model);
-                            if ("0".equals(vilValue)) {
-                                updateFunctionCode(model, map);
-                                return "解析成功！";
-                            } else {
-                                if (road != null && road != "" && road.length() > 0) {
-                                    String value = this.judgeEqual("6", type, map, model);
-                                    if ("0".equals(value)) {
-                                        updateFunctionCode(model, map);
-                                        return "解析成功！";
-                                    } else {
-                                        this.invokeAPI(model, map);
-                                        return "解析成功!";
-                                        //  return "解析失败！";
-                                    }
-                                } else {
-                                    this.invokeAPI(model, map);
+                    }
+                }
 
+                    if (StringUtils.isNotEmpty(town)) {
+                        List<AddressCodeModel> townAreas = dao.findByAreaAndNameAndLevel(town, "", "4");
+                        if (townAreas != null && townAreas.size() > 0) {
+                            for(int j=0;j<townAreas.size();j++) {
+                                String region = townAreas.get(j).getDescription().split(",")[2];
+                                if (region.equals(area)) {
+                                    model.setRegion(region);
+                                    updateFunctionCode(model, map);
                                     return "解析成功!";
                                 }
                             }
-                        } else if (town == null && vil == null && road != null && road != "" && road.length() > 0) {
-                            String value = this.judgeEqual("6", type, map, model);
-                            if ("0".equals(value)) {
+
+                            if (area.equals("鄞州区") && dao.findByAreaAndNameAndLevel(town, "海曙区", "4").size() > 0) {
+                                model.setRegion("海曙区");
                                 updateFunctionCode(model, map);
-                                return "解析成功！";
-                            } else {
+                                return "解析成功!";
+                            }
+                            if (area.equals("海曙区") && dao.findByAreaAndNameAndLevel(town, "鄞州区", "4").size() > 0) {
+                                model.setRegion("鄞州区");
+                                updateFunctionCode(model, map);
+                                return "解析成功!";
+                            }
+
+                            this.invokeAPI(model, map);
+                            return "解析成功!";
+                        }else{
+                                if (vil != null && vil != "" && vil.length() > 0) {
+                                    List<AddressCodeModel> requestAreas = dao.findByAreaAndNameAndLevel(vil, "", "5");
+                                    if (requestAreas != null && requestAreas.size() >0) {
+                                        for(int j=0;j<requestAreas.size();j++) {
+                                            String region = requestAreas.get(j).getDescription().split(",")[2];
+                                            if (region.equals(area)) {
+                                                model.setRegion(region);
+                                                updateFunctionCode(model, map);
+                                                return "解析成功!";
+                                            }
+                                        }
+
+                                        if (area.equals("鄞州区") && dao.findByAreaAndNameAndLevel(vil, "海曙区", "5").size() > 0) {
+                                            model.setRegion("海曙区");
+                                            updateFunctionCode(model, map);
+                                            return "解析成功!";
+                                        }
+                                        if (area.equals("海曙区") && dao.findByAreaAndNameAndLevel(vil, "鄞州区", "5").size() > 0) {
+                                            model.setRegion("鄞州区");
+                                            updateFunctionCode(model, map);
+                                            return "解析成功!";
+                                        }
+
+                                        this.invokeAPI(model, map);
+                                        return "解析成功!";
+                                    }else {
+                                        List<AddressCodeModel> roadAreas = dao.findByAreaAndNameAndLevel(road, "", "6");
+                                        if (roadAreas != null && roadAreas.size() > 0) {
+                                            for(int j=0;j<roadAreas.size();j++) {
+                                                String region = roadAreas.get(j).getDescription().split(",")[2];
+                                                if (region.equals(area)) {
+                                                    model.setRegion(region);
+                                                    updateFunctionCode(model, map);
+                                                    return "解析成功!";
+                                                }
+
+                                            }
+                                            if (area.equals("鄞州区") && dao.findByAreaAndNameAndLevel(road, "海曙区", "6").size() > 0) {
+                                                model.setRegion("海曙区");
+                                                updateFunctionCode(model, map);
+                                                return "解析成功!";
+                                            }
+                                            if (area.equals("海曙区") && dao.findByAreaAndNameAndLevel(road, "鄞州区", "6").size() > 0) {
+                                                model.setRegion("鄞州区");
+                                                updateFunctionCode(model, map);
+                                                return "解析成功!";
+                                            }
+                                            this.invokeAPI(model, map);
+                                            return "解析成功!";
+                                        } else {
+                                            this.invokeAPI(model, map);
+                                            return "解析成功!";
+                                        }
+                                    }
+                                }else{
+                                    if (road != null && road != "" && road.length() > 0) {
+                                        List<AddressCodeModel> roadAreas = dao.findByAreaAndNameAndLevel(road, "", "6");
+                                        if (roadAreas != null && roadAreas.size() > 0) {
+                                            for(int j=0;j<roadAreas.size();j++) {
+                                                String region = roadAreas.get(j).getDescription().split(",")[2];
+                                                if (region.equals(area)) {
+                                                    model.setRegion(region);
+                                                    updateFunctionCode(model, map);
+                                                    return "解析成功!";
+                                                }
+                                            }
+
+                                            if (area.equals("鄞州区") && dao.findByAreaAndNameAndLevel(road, "海曙区", "6").size() > 0) {
+                                                model.setRegion("海曙区");
+                                                updateFunctionCode(model, map);
+                                                return "解析成功!";
+                                            }
+                                            if (area.equals("海曙区") && dao.findByAreaAndNameAndLevel(road, "鄞州区", "6").size() > 0) {
+                                                model.setRegion("鄞州区");
+                                                updateFunctionCode(model, map);
+                                                return "解析成功!";
+                                            }
+
+                                            this.invokeAPI(model, map);
+                                            return "解析成功!";
+
+                                        } else {
+                                            this.invokeAPI(model, map);
+                                            return "解析成功!";
+                                        }
+                                    }else{
+                                        this.invokeAPI(model, map);
+                                        return "解析成功!";
+                                    }
+                                }
+                        }
+                    } else if (vil != null && vil != "" && vil.length() > 0) {
+
+                        List<AddressCodeModel> requestAreas = dao.findByAreaAndNameAndLevel(vil, "", "5");
+                        if (requestAreas != null && requestAreas.size() > 0) {
+                            for(int j=0;j<requestAreas.size();j++) {
+                                String region = requestAreas.get(j).getDescription().split(",")[2];
+                                if (region.equals(area)) {
+                                    model.setRegion(region);
+                                    updateFunctionCode(model, map);
+                                    return "解析成功!";
+                                }
+                            }
+                            if (area.equals("鄞州区") && dao.findByAreaAndNameAndLevel(vil, "海曙区", "5").size() > 0) {
+                                model.setRegion("海曙区");
+                                updateFunctionCode(model, map);
+                                return "解析成功!";
+                            }
+                            if (area.equals("海曙区") && dao.findByAreaAndNameAndLevel(vil, "鄞州区", "5").size() > 0) {
+                                model.setRegion("鄞州区");
+                                updateFunctionCode(model, map);
+                                return "解析成功!";
+                            }
+
+                            this.invokeAPI(model, map);
+                            return "解析成功!";
+                        } else {
+                            if (road != null && road != "" && road.length() > 0) {
+                                List<AddressCodeModel> roadAreas = dao.findByAreaAndNameAndLevel(road, "", "6");
+                                if (roadAreas != null && roadAreas.size() > 0) {
+                                    for(int j=0;j<roadAreas.size();j++) {
+                                        String region = roadAreas.get(j).getDescription().split(",")[2];
+                                        if (region.equals(area)) {
+                                            model.setRegion(region);
+                                            updateFunctionCode(model, map);
+                                            return "解析成功!";
+                                        }
+                                    }
+
+                                    if (area.equals("鄞州区") && dao.findByAreaAndNameAndLevel(road, "海曙区", "6").size() > 0) {
+                                        model.setRegion("海曙区");
+                                        updateFunctionCode(model, map);
+                                        return "解析成功!";
+                                    }
+                                    if (area.equals("海曙区") && dao.findByAreaAndNameAndLevel(road, "鄞州区", "6").size() > 0) {
+                                        model.setRegion("鄞州区");
+                                        updateFunctionCode(model, map);
+                                        return "解析成功!";
+                                    }
+                                    this.invokeAPI(model, map);
+                                    return "解析成功!";
+
+                                } else {
+                                    this.invokeAPI(model, map);
+                                    return "解析成功!";
+                                }
+                            }else{
                                 this.invokeAPI(model, map);
                                 return "解析成功!";
-                                // return "解析失败！";
                             }
+                        }
+                    } else if (road != null && road != "" && road.length() > 0) {
+                        List<AddressCodeModel> roadAreas = dao.findByAreaAndNameAndLevel(road, "", "6");
+                        if (roadAreas != null && roadAreas.size() > 0) {
+                            for(int j=0;j<roadAreas.size();j++) {
+                                String region = roadAreas.get(j).getDescription().split(",")[2];
+                                if (region.equals(area)) {
+                                    model.setRegion(region);
+                                    updateFunctionCode(model, map);
+                                    return "解析成功!";
+                                }
+                            }
+                            if (area.equals("鄞州区") && dao.findByAreaAndNameAndLevel(road, "海曙区", "6").size() > 0) {
+                                model.setRegion("海曙区");
+                                updateFunctionCode(model, map);
+                                return "解析成功!";
+                            }
+                            if (area.equals("海曙区") && dao.findByAreaAndNameAndLevel(road, "鄞州区", "6").size() > 0) {
+                                model.setRegion("鄞州区");
+                                updateFunctionCode(model, map);
+                                return "解析成功!";
+                            }
+
+                            this.invokeAPI(model, map);
+                            return "解析成功!";
                         } else {
                             this.invokeAPI(model, map);
                             return "解析成功!";
                         }
-                    }
-                } else if (town == null && vil != null && vil != "" && vil.length() > 0) {
-                    String vilValue = this.judgeEqual("5", type, map, model);
-                    if ("0".equals(vilValue)) {
-                        updateFunctionCode(model, map);
-                        return "解析成功！";
-                    } else {
-                        if (road != null && road != "" && road.length() > 0) {
-                            String value = this.judgeEqual("6", type, map, model);
-                            if ("0".equals(value)) {
-                                updateFunctionCode(model, map);
-                                return "解析成功！";
-                            } else {
-                                this.invokeAPI(model, map);
-                                return "解析成功!";
-                                //  return "解析失败！";
-                            }
-                        } else {
-                            this.invokeAPI(model, map);
-                            return "解析成功!";
-                        }
-                    }
-                } else if (town == null && vil == null && road != null && road != "" && road.length() > 0) {
-                    String value = this.judgeEqual("6", type, map, model);
-                    if ("0".equals(value)) {
-                        updateFunctionCode(model, map);
-                        return "解析成功！";
-                    } else {
+                    }else {
                         this.invokeAPI(model, map);
                         return "解析成功!";
-                        // return "解析失败！";
                     }
-                } else {
-                    this.invokeAPI(model, map);
-                    return "解析成功!";
-                }
+
+            }else{
+                this.invokeAPI(model, map);
+                return "解析成功!";
             }
         } else {
             model.setFunction_region(lists.get(0).getFunction_region());
@@ -725,44 +885,12 @@ public class AddressCodeServiceImpl extends BaseService<AddressCodeModel> implem
         JsonMapper mapper = new JsonMapper();
         GaoDeDto dto = mapper.fromJson(str, GaoDeDto.class);
         if (StringUtils.isNotEmpty(str)) {
-            if (dto.getGeocodes().size() == 1) {
+            if (dto != null && dto.getGeocodes().size() == 1) {
 
                 model.setRegion(dto.getGeocodes().get(0).getDistrict());
                 updateFunctionCode(model, map);
             }
         }
-
-
-
-          /*  int id = model.getId();
-            if (Integer.valueOf(id) != null) {
-                dao.setDesc(desc, id);
-            }
-
-            if (dataObject == null || dataObject.get("road_list") == null) {
-                return;
-            }
-
-            String roadList = dataObject.get("road_list").toString();
-            List<Road> roads = JSONArray.parseArray(roadList, Road.class);
-            for (Road road : roads) {
-                String reg = "[0-9]*弄";
-                Pattern pattern = Pattern.compile(reg);
-                Matcher matcher = pattern.matcher(road.getName());
-                boolean rs = matcher.find();
-                if (rs) {
-                    int end = matcher.start();
-                    model.setName(road.getName().substring(0, end));
-                }else{
-                    model.setName(road.getName());
-                }
-
-                model.setRegion_code(IdGenerator.getId());
-                model.setLevel(6 + "");
-                model.setDescription(desc);
-                model.setUrl("");
-            }*/
-
     }
 
     public JsonReturn updateAddressCode() {

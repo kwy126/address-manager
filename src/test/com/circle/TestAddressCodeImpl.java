@@ -20,8 +20,9 @@ public class TestAddressCodeImpl {
 
         ApplicationContext ctx = new ClassPathXmlApplicationContext("applicationContext.xml");
         AddressModel model = new AddressModel();
-        model.setRequester_address("浙江省宁波市鄞州区集仕港宁波宝翔新材料有限公司");
+        model.setRequester_address("浙江省宁波市星光路128号");
         model.setRequest_number("2013106241473");
+        model.setRequester_postcode("315040");
 
         TestAddressCodeImpl impl = (TestAddressCodeImpl) ctx.getBean("testAddressCodeImpl");
 

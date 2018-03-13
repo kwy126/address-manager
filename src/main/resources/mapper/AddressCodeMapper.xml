@@ -97,14 +97,12 @@
 
 
     <select id="findByAreaAndNameAndLevel" parameterType="String"  resultMap="AddressCodeModel">
-        select * from te_address_code where name=#{name} and level=#{level}
+        select * from te_address_code where level=#{level}
         <if test="description!=null and description!=''">
             and description like CONCAT('%',#{description},'%')
         </if>
-        UNION
-        select * from te_address_code where name=#{name} and level=#{level}
-        <if test="description!=null and description!=''">
-            and old_desc like CONCAT('%',#{description},'%')
+        <if test="name!=null and name!=''">
+            and name like CONCAT('%',#{name},'%')
         </if>
 
     </select>
